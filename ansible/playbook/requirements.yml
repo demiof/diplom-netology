@@ -1,8 +1,0 @@
----
-# roles:
-#   - name: cloudalchemy.grafana
-#     version: 0.17.0
-#   - name: cloudalchemy.prometheus
-#     version: 2.16.2
-#   - name: cloudalchemy.alertmanager
-#     version: 0.19.1
