@@ -1,0 +1,13 @@
+---
+# defaults file for node_exporter_role
+
+user: 'root' # now that this awfull! but after connect web.yaml only this way helps works somehow (
+group: 'root'
+# user: 'nodeusr'
+# group: 'nodeusr'
+pkg_node_exporter_url: 'https://github.com/prometheus/node_exporter/releases/download/v1.4.0/node_exporter-1.4.0.linux-amd64.tar.gz'
+pkg_node_exporter: 'node_exporter-1.4.0.linux-amd64.tar.gz'
+path: '/usr/local/bin'
+conf_dir: /etc/node_exporter
+ne_key: node_exporter_{{ host_name }}.key
+ne_crt: node_exporter_{{ host_name }}.crt

@@ -1,0 +1,18 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    managed: False
+    ansible_connection_options: 
+      ansible_connection: local
+platforms:
+  - name: instance
+    image: quay.io/libpod/ubuntu
+    pre_build_image: true
+
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

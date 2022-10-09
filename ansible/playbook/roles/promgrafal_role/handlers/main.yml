@@ -1,0 +1,28 @@
+---
+# handlers file for promgrafal_role
+
+- name: restart prometheus
+  become: true
+  systemd:
+    daemon_reload: true
+    name: prometheus
+    state: restarted
+
+- name: reload prometheus
+  become: true
+  systemd:
+    name: prometheus
+    state: reloaded
+
+- name: restart alertmanager
+  become: true
+  systemd:
+    daemon_reload: true
+    name: alertmanager
+    state: restarted
+
+- name: reload alertmanager
+  become: true
+  systemd:
+    name: alertmanager
+    state: reloaded

@@ -1,0 +1,30 @@
+---
+# vars file for promgrafal_role
+
+go_arch: "amd64"
+
+# prometheus_ver: 2.27.0
+prometheus_domain: "alertmanager.link-tel.ru"
+prometheus_port: 9090
+_prometheus_binary_install_dir: '/usr/local/bin'
+prometheus_cert: "/etc/certs/mon_certs/prometheus.link-tel.ru_fullchain.pem"
+prometheus_key: "/etc/certs/mon_certs/prometheus.link-tel.ru_privkey.pem"
+
+#grafana_ver: "9.2.0"
+grafana_ver: 8.5.13
+grafana_domain: "grafana.link-tel.ru"
+grafana_port: 3000
+grafana_cert: "/etc/certs/mon_certs/grafana.link-tel.ru_fullchain.pem"
+grafana_key: "/etc/certs/mon_certs/grafana.link-tel.ru_privkey.pem"
+
+alertmanager_version: 0.24.0
+alertmanager_domain: "alertmanager.link-tel.ru"
+alertmanager_port: 9093
+alertmanager_cert: "/etc/certs/mon_certs/alertmanager.link-tel.ru_fullchain.pem"
+alertmanager_key: "/etc/certs/mon_certs/alertmanager.link-tel.ru_privkey.pem"
+alertmanager_systemd_version: 249
+
+yc_folderId: b1g0cjulnkupf6ghdlko
+yc_serviceId: c9qndkrctkp2kdffec92
+yc_api_keyId: aje2i4ouvrl49fbb3np8
+yc_api_key: AQVNwpEx7-6kS9ax3yjXduETXzowCeoFJuOaNheO

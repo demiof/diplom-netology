@@ -1,0 +1,11 @@
+---
+# vars file for wordpress_role
+
+project_home: "/root/netol_do/diplom"
+tf_home: "{{ project_home }}/terraform/"
+role_home: "{{ project_home }}/ansible/playbook/roles"
+role_wordpress_home: "{{ role_home }}/wordpress_role"
+packer_home: "{{ role_wordpress_home }}/files"
+packer_hcl_www_file_name: "ubuntu-22.04-app-img.pkr.hcl"
+files_home: "{{ role_wordpress_home }}/roles/files"
+img_id: "{{ lookup('env', 'TF_VAR_ubuntu_22_04_instance_linktelru_id') }}"

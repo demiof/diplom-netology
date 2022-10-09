@@ -1,0 +1,19 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: ubuntu_xenial_1604
+    pre_build_image: true
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      group_vars: /root/netol_do/diplom/ansible/playbook/group_vars/
+    host_vars:
+      instance: 
+        ansible_python_interpreter: /usr/bin/python3
+verifier:
+  name: ansible

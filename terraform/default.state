@@ -1,0 +1,1123 @@
+{
+  "version": 4,
+  "terraform_version": "1.2.3",
+  "serial": 19,
+  "lineage": "7f146387-5f1e-1b9c-6209-7e6c872f20d6",
+  "outputs": {
+    "TF_VAR_subnets_dpl_ru_central1_a": {
+      "value": {
+        "created_at": "2022-09-19T14:40:01Z",
+        "description": "",
+        "dhcp_options": [],
+        "folder_id": "b1g0cjulnkupf6ghdlko",
+        "id": "e9b7rghfllllpm1l79gf",
+        "labels": {},
+        "name": "subnet_dpl_192.168.111.0/24",
+        "network_id": "enp7qsbiu0ocldui5ttj",
+        "route_table_id": "enpsdumn61p71aktehc6",
+        "subnet_id": "e9b7rghfllllpm1l79gf",
+        "v4_cidr_blocks": [
+          "192.168.111.0/24"
+        ],
+        "v6_cidr_blocks": [],
+        "zone": "ru-central1-a"
+      },
+      "type": [
+        "object",
+        {
+          "created_at": "string",
+          "description": "string",
+          "dhcp_options": [
+            "list",
+            [
+              "object",
+              {
+                "domain_name": "string",
+                "domain_name_servers": [
+                  "list",
+                  "string"
+                ],
+                "ntp_servers": [
+                  "list",
+                  "string"
+                ]
+              }
+            ]
+          ],
+          "folder_id": "string",
+          "id": "string",
+          "labels": [
+            "map",
+            "string"
+          ],
+          "name": "string",
+          "network_id": "string",
+          "route_table_id": "string",
+          "subnet_id": "string",
+          "v4_cidr_blocks": [
+            "list",
+            "string"
+          ],
+          "v6_cidr_blocks": [
+            "list",
+            "string"
+          ],
+          "zone": "string"
+        }
+      ]
+    },
+    "TF_VAR_subnets_dpl_ru_central1_a_id": {
+      "value": "e9b7rghfllllpm1l79gf",
+      "type": "string"
+    },
+    "external_ipv4_address": {
+      "value": {
+        "address_id": "e9bf0ss5kmnabpf25nm2",
+        "created_at": "2022-09-19T14:40:00Z",
+        "description": "",
+        "external_ipv4_address": [
+          {
+            "address": "51.250.50.9",
+            "ddos_protection_provider": "qrator",
+            "outgoing_smtp_capability": "",
+            "zone_id": "ru-central1-a"
+          }
+        ],
+        "folder_id": "b1g0cjulnkupf6ghdlko",
+        "id": "e9bf0ss5kmnabpf25nm2",
+        "labels": {},
+        "name": "pub_ipv4",
+        "reserved": true,
+        "used": true
+      },
+      "type": [
+        "object",
+        {
+          "address_id": "string",
+          "created_at": "string",
+          "description": "string",
+          "external_ipv4_address": [
+            "list",
+            [
+              "object",
+              {
+                "address": "string",
+                "ddos_protection_provider": "string",
+                "outgoing_smtp_capability": "string",
+                "zone_id": "string"
+              }
+            ]
+          ],
+          "folder_id": "string",
+          "id": "string",
+          "labels": [
+            "map",
+            "string"
+          ],
+          "name": "string",
+          "reserved": "bool",
+          "used": "bool"
+        }
+      ]
+    },
+    "my_subnets": {
+      "value": {
+        "a": {
+          "ru_central1_a": [
+            "192.168.111.0/24"
+          ]
+        },
+        "b": {
+          "ru_central1_b": [
+            "192.168.112.0/24"
+          ]
+        },
+        "c": {
+          "ru_central1_c": [
+            "192.168.110.0/24"
+          ]
+        }
+      },
+      "type": [
+        "map",
+        [
+          "map",
+          [
+            "list",
+            "string"
+          ]
+        ]
+      ]
+    },
+    "network_dpl": {
+      "value": {
+        "created_at": "2022-09-19T14:40:01Z",
+        "default_security_group_id": "",
+        "description": "",
+        "folder_id": "b1g0cjulnkupf6ghdlko",
+        "id": "enp7qsbiu0ocldui5ttj",
+        "labels": {},
+        "name": "network_dpl",
+        "network_id": "enp7qsbiu0ocldui5ttj",
+        "subnet_ids": [
+          "e9b7rghfllllpm1l79gf"
+        ]
+      },
+      "type": [
+        "object",
+        {
+          "created_at": "string",
+          "default_security_group_id": "string",
+          "description": "string",
+          "folder_id": "string",
+          "id": "string",
+          "labels": [
+            "map",
+            "string"
+          ],
+          "name": "string",
+          "network_id": "string",
+          "subnet_ids": [
+            "list",
+            "string"
+          ]
+        }
+      ]
+    },
+    "yc_cloud_id": {
+      "value": "b1gtlo6uqrvrdckscbg8",
+      "type": "string"
+    },
+    "yc_folder_id": {
+      "value": "b1g0cjulnkupf6ghdlko",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "yandex_iam_service_account",
+      "name": "sa",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-07T12:28:44Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "ajeei942vm1rejr9fkmo",
+            "name": "tf-diplom",
+            "service_account_id": "ajeei942vm1rejr9fkmo"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "yandex_vpc_address",
+      "name": "addr",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "address_id": "e9bf0ss5kmnabpf25nm2",
+            "created_at": "2022-09-19T14:40:00Z",
+            "description": "",
+            "external_ipv4_address": [
+              {
+                "address": "51.250.50.9",
+                "ddos_protection_provider": "qrator",
+                "outgoing_smtp_capability": "",
+                "zone_id": "ru-central1-a"
+              }
+            ],
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "e9bf0ss5kmnabpf25nm2",
+            "labels": {},
+            "name": "pub_ipv4",
+            "reserved": true,
+            "used": true
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "yandex_vpc_network",
+      "name": "network_dpl",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-19T14:40:01Z",
+            "default_security_group_id": "",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "enp7qsbiu0ocldui5ttj",
+            "labels": {},
+            "name": "network_dpl",
+            "network_id": "enp7qsbiu0ocldui5ttj",
+            "subnet_ids": [
+              "e9b7rghfllllpm1l79gf"
+            ]
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "yandex_vpc_subnet",
+      "name": "subnets_dpl_ru_central1_a",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-19T14:40:01Z",
+            "description": "",
+            "dhcp_options": [],
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "e9b7rghfllllpm1l79gf",
+            "labels": {},
+            "name": "subnet_dpl_192.168.111.0/24",
+            "network_id": "enp7qsbiu0ocldui5ttj",
+            "route_table_id": "enpsdumn61p71aktehc6",
+            "subnet_id": "e9b7rghfllllpm1l79gf",
+            "v4_cidr_blocks": [
+              "192.168.111.0/24"
+            ],
+            "v6_cidr_blocks": [],
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_compute_instance",
+      "name": "gitlablinktel",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "allow_recreate": null,
+            "allow_stopping_for_update": null,
+            "boot_disk": [
+              {
+                "auto_delete": true,
+                "device_name": "fhmb005sa6usrv44q1nm",
+                "disk_id": "fhmb005sa6usrv44q1nm",
+                "initialize_params": [
+                  {
+                    "block_size": 4096,
+                    "description": "",
+                    "image_id": "fd8hpv3j189blhetfq5r",
+                    "name": "",
+                    "size": 10,
+                    "snapshot_id": "",
+                    "type": "network-hdd"
+                  }
+                ],
+                "mode": "READ_WRITE"
+              }
+            ],
+            "created_at": "2022-09-29T06:44:33Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "fqdn": "fhmn9f363rq83gj8rgs4.auto.internal",
+            "hostname": "",
+            "id": "fhmn9f363rq83gj8rgs4",
+            "labels": {},
+            "local_disk": [],
+            "metadata": {
+              "ssh-keys": "root:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EBW4EvwnnNwWdOQ1j6YIOWB3vva9eirTQVKrRCytfctp9ywoprD4HyLUAY5nWwlepkD3JtMDQEsuPEZpm6ehqOX5oteK4NZ8Jp6aPwQLIyK5g2QetxJxnEHMpXW2nymnNBAen/2tX2c65rAVn0k7sDAY34+IerZaVKU1PKF2DjkK845CZRbYoIOnCjPZVGu4uIzlPMTPgPWTMP4qjIuq3kgnJsOBpTRIf7OpDKSKXKuKRfE/eILlBONPpRtFxkLZwmBw1B3KsNjbeAguIbkMgOoUmdzvxffcPR0Wsu0me52NQJ4srgVL5QTXGgUSLgoTv1L30fFi0jqFVwZVTCWF root@dev1\n"
+            },
+            "name": "gitlablinktel",
+            "network_acceleration_type": "standard",
+            "network_interface": [
+              {
+                "dns_record": [],
+                "index": 0,
+                "ip_address": "192.168.111.37",
+                "ipv4": true,
+                "ipv6": false,
+                "ipv6_address": "",
+                "ipv6_dns_record": [],
+                "mac_address": "d0:0d:17:4b:c6:61",
+                "nat": false,
+                "nat_dns_record": [],
+                "nat_ip_address": "",
+                "nat_ip_version": "",
+                "security_group_ids": [],
+                "subnet_id": "e9b7rghfllllpm1l79gf"
+              }
+            ],
+            "placement_policy": [
+              {
+                "host_affinity_rules": [],
+                "placement_group_id": ""
+              }
+            ],
+            "platform_id": "standard-v1",
+            "resources": [
+              {
+                "core_fraction": 100,
+                "cores": 4,
+                "gpus": 0,
+                "memory": 4
+              }
+            ],
+            "scheduling_policy": [
+              {
+                "preemptible": false
+              }
+            ],
+            "secondary_disk": [],
+            "service_account_id": "",
+            "status": "running",
+            "timeouts": null,
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "zone"
+              }
+            ]
+          ],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjMwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_compute_instance",
+      "name": "linktelru",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "allow_recreate": null,
+            "allow_stopping_for_update": null,
+            "boot_disk": [
+              {
+                "auto_delete": true,
+                "device_name": "fhmmkui7bshmjdlbs6ab",
+                "disk_id": "fhmmkui7bshmjdlbs6ab",
+                "initialize_params": [
+                  {
+                    "block_size": 4096,
+                    "description": "",
+                    "image_id": "fd83ptsambd9kf9jbs2m",
+                    "name": "",
+                    "size": 10,
+                    "snapshot_id": "",
+                    "type": "network-hdd"
+                  }
+                ],
+                "mode": "READ_WRITE"
+              }
+            ],
+            "created_at": "2022-09-26T13:12:37Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "fqdn": "fhmt1nn9l390488u7ddg.auto.internal",
+            "hostname": "",
+            "id": "fhmt1nn9l390488u7ddg",
+            "labels": {},
+            "local_disk": [],
+            "metadata": {
+              "ssh-keys": "root:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EBW4EvwnnNwWdOQ1j6YIOWB3vva9eirTQVKrRCytfctp9ywoprD4HyLUAY5nWwlepkD3JtMDQEsuPEZpm6ehqOX5oteK4NZ8Jp6aPwQLIyK5g2QetxJxnEHMpXW2nymnNBAen/2tX2c65rAVn0k7sDAY34+IerZaVKU1PKF2DjkK845CZRbYoIOnCjPZVGu4uIzlPMTPgPWTMP4qjIuq3kgnJsOBpTRIf7OpDKSKXKuKRfE/eILlBONPpRtFxkLZwmBw1B3KsNjbeAguIbkMgOoUmdzvxffcPR0Wsu0me52NQJ4srgVL5QTXGgUSLgoTv1L30fFi0jqFVwZVTCWF root@dev1\n"
+            },
+            "name": "linktel",
+            "network_acceleration_type": "standard",
+            "network_interface": [
+              {
+                "dns_record": [],
+                "index": 0,
+                "ip_address": "192.168.111.30",
+                "ipv4": true,
+                "ipv6": false,
+                "ipv6_address": "",
+                "ipv6_dns_record": [],
+                "mac_address": "d0:0d:1d:0d:ee:9a",
+                "nat": true,
+                "nat_dns_record": [],
+                "nat_ip_address": "51.250.50.9",
+                "nat_ip_version": "IPV4",
+                "security_group_ids": [],
+                "subnet_id": "e9b7rghfllllpm1l79gf"
+              }
+            ],
+            "placement_policy": [
+              {
+                "host_affinity_rules": [],
+                "placement_group_id": ""
+              }
+            ],
+            "platform_id": "standard-v1",
+            "resources": [
+              {
+                "core_fraction": 100,
+                "cores": 2,
+                "gpus": 0,
+                "memory": 2
+              }
+            ],
+            "scheduling_policy": [
+              {
+                "preemptible": false
+              }
+            ],
+            "secondary_disk": [],
+            "service_account_id": "",
+            "status": "running",
+            "timeouts": null,
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "zone"
+              }
+            ]
+          ],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjMwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "data.yandex_vpc_address.addr",
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_compute_instance",
+      "name": "monlinktel",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "allow_recreate": null,
+            "allow_stopping_for_update": null,
+            "boot_disk": [
+              {
+                "auto_delete": true,
+                "device_name": "fhm422g095jp9l711vf9",
+                "disk_id": "fhm422g095jp9l711vf9",
+                "initialize_params": [
+                  {
+                    "block_size": 4096,
+                    "description": "",
+                    "image_id": "fd8hpv3j189blhetfq5r",
+                    "name": "monlinktel-disk",
+                    "size": 40,
+                    "snapshot_id": "",
+                    "type": "network-hdd"
+                  }
+                ],
+                "mode": "READ_WRITE"
+              }
+            ],
+            "created_at": "2022-09-29T06:44:33Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "fqdn": "fhmmfpg7g20glpv5ne48.auto.internal",
+            "hostname": "",
+            "id": "fhmmfpg7g20glpv5ne48",
+            "labels": {},
+            "local_disk": [],
+            "metadata": {
+              "ssh-keys": "root:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EBW4EvwnnNwWdOQ1j6YIOWB3vva9eirTQVKrRCytfctp9ywoprD4HyLUAY5nWwlepkD3JtMDQEsuPEZpm6ehqOX5oteK4NZ8Jp6aPwQLIyK5g2QetxJxnEHMpXW2nymnNBAen/2tX2c65rAVn0k7sDAY34+IerZaVKU1PKF2DjkK845CZRbYoIOnCjPZVGu4uIzlPMTPgPWTMP4qjIuq3kgnJsOBpTRIf7OpDKSKXKuKRfE/eILlBONPpRtFxkLZwmBw1B3KsNjbeAguIbkMgOoUmdzvxffcPR0Wsu0me52NQJ4srgVL5QTXGgUSLgoTv1L30fFi0jqFVwZVTCWF root@dev1\n"
+            },
+            "name": "monlinktel",
+            "network_acceleration_type": "standard",
+            "network_interface": [
+              {
+                "dns_record": [],
+                "index": 0,
+                "ip_address": "192.168.111.39",
+                "ipv4": true,
+                "ipv6": false,
+                "ipv6_address": "",
+                "ipv6_dns_record": [],
+                "mac_address": "d0:0d:16:7e:60:78",
+                "nat": false,
+                "nat_dns_record": [],
+                "nat_ip_address": "",
+                "nat_ip_version": "",
+                "security_group_ids": [],
+                "subnet_id": "e9b7rghfllllpm1l79gf"
+              }
+            ],
+            "placement_policy": [
+              {
+                "host_affinity_rules": [],
+                "placement_group_id": ""
+              }
+            ],
+            "platform_id": "standard-v1",
+            "resources": [
+              {
+                "core_fraction": 100,
+                "cores": 4,
+                "gpus": 0,
+                "memory": 4
+              }
+            ],
+            "scheduling_policy": [
+              {
+                "preemptible": false
+              }
+            ],
+            "secondary_disk": [],
+            "service_account_id": "",
+            "status": "running",
+            "timeouts": null,
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "zone"
+              }
+            ]
+          ],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjMwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_compute_instance",
+      "name": "runlinktel",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "allow_recreate": null,
+            "allow_stopping_for_update": null,
+            "boot_disk": [
+              {
+                "auto_delete": true,
+                "device_name": "fhmnb365jh7upis5jrpl",
+                "disk_id": "fhmnb365jh7upis5jrpl",
+                "initialize_params": [
+                  {
+                    "block_size": 4096,
+                    "description": "",
+                    "image_id": "fd8hpv3j189blhetfq5r",
+                    "name": "",
+                    "size": 10,
+                    "snapshot_id": "",
+                    "type": "network-hdd"
+                  }
+                ],
+                "mode": "READ_WRITE"
+              }
+            ],
+            "created_at": "2022-09-29T06:44:33Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "fqdn": "fhm8ndfrkegdmktt9fvr.auto.internal",
+            "hostname": "",
+            "id": "fhm8ndfrkegdmktt9fvr",
+            "labels": {},
+            "local_disk": [],
+            "metadata": {
+              "ssh-keys": "root:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EBW4EvwnnNwWdOQ1j6YIOWB3vva9eirTQVKrRCytfctp9ywoprD4HyLUAY5nWwlepkD3JtMDQEsuPEZpm6ehqOX5oteK4NZ8Jp6aPwQLIyK5g2QetxJxnEHMpXW2nymnNBAen/2tX2c65rAVn0k7sDAY34+IerZaVKU1PKF2DjkK845CZRbYoIOnCjPZVGu4uIzlPMTPgPWTMP4qjIuq3kgnJsOBpTRIf7OpDKSKXKuKRfE/eILlBONPpRtFxkLZwmBw1B3KsNjbeAguIbkMgOoUmdzvxffcPR0Wsu0me52NQJ4srgVL5QTXGgUSLgoTv1L30fFi0jqFVwZVTCWF root@dev1\n"
+            },
+            "name": "runlinktel",
+            "network_acceleration_type": "standard",
+            "network_interface": [
+              {
+                "dns_record": [],
+                "index": 0,
+                "ip_address": "192.168.111.11",
+                "ipv4": true,
+                "ipv6": false,
+                "ipv6_address": "",
+                "ipv6_dns_record": [],
+                "mac_address": "d0:0d:8b:b5:fb:a3",
+                "nat": false,
+                "nat_dns_record": [],
+                "nat_ip_address": "",
+                "nat_ip_version": "",
+                "security_group_ids": [],
+                "subnet_id": "e9b7rghfllllpm1l79gf"
+              }
+            ],
+            "placement_policy": [
+              {
+                "host_affinity_rules": [],
+                "placement_group_id": ""
+              }
+            ],
+            "platform_id": "standard-v1",
+            "resources": [
+              {
+                "core_fraction": 100,
+                "cores": 4,
+                "gpus": 0,
+                "memory": 4
+              }
+            ],
+            "scheduling_policy": [
+              {
+                "preemptible": false
+              }
+            ],
+            "secondary_disk": [],
+            "service_account_id": "",
+            "status": "running",
+            "timeouts": null,
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "zone"
+              }
+            ]
+          ],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjMwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_compute_instance",
+      "name": "wwwlinktelru",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "allow_recreate": null,
+            "allow_stopping_for_update": null,
+            "boot_disk": [
+              {
+                "auto_delete": true,
+                "device_name": "fhmhv1824o9d5a8c2bei",
+                "disk_id": "fhmhv1824o9d5a8c2bei",
+                "initialize_params": [
+                  {
+                    "block_size": 4096,
+                    "description": "",
+                    "image_id": "fd8hpv3j189blhetfq5r",
+                    "name": "",
+                    "size": 10,
+                    "snapshot_id": "",
+                    "type": "network-hdd"
+                  }
+                ],
+                "mode": "READ_WRITE"
+              }
+            ],
+            "created_at": "2022-09-26T13:12:37Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "fqdn": "fhmhjhj4g3gfg86bluqn.auto.internal",
+            "hostname": "",
+            "id": "fhmhjhj4g3gfg86bluqn",
+            "labels": {},
+            "local_disk": [],
+            "metadata": {
+              "ssh-keys": "root:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/EBW4EvwnnNwWdOQ1j6YIOWB3vva9eirTQVKrRCytfctp9ywoprD4HyLUAY5nWwlepkD3JtMDQEsuPEZpm6ehqOX5oteK4NZ8Jp6aPwQLIyK5g2QetxJxnEHMpXW2nymnNBAen/2tX2c65rAVn0k7sDAY34+IerZaVKU1PKF2DjkK845CZRbYoIOnCjPZVGu4uIzlPMTPgPWTMP4qjIuq3kgnJsOBpTRIf7OpDKSKXKuKRfE/eILlBONPpRtFxkLZwmBw1B3KsNjbeAguIbkMgOoUmdzvxffcPR0Wsu0me52NQJ4srgVL5QTXGgUSLgoTv1L30fFi0jqFVwZVTCWF root@dev1\n"
+            },
+            "name": "applinktel",
+            "network_acceleration_type": "standard",
+            "network_interface": [
+              {
+                "dns_record": [],
+                "index": 0,
+                "ip_address": "192.168.111.9",
+                "ipv4": true,
+                "ipv6": false,
+                "ipv6_address": "",
+                "ipv6_dns_record": [],
+                "mac_address": "d0:0d:11:9c:66:48",
+                "nat": false,
+                "nat_dns_record": [],
+                "nat_ip_address": "",
+                "nat_ip_version": "",
+                "security_group_ids": [],
+                "subnet_id": "e9b7rghfllllpm1l79gf"
+              }
+            ],
+            "placement_policy": [
+              {
+                "host_affinity_rules": [],
+                "placement_group_id": ""
+              }
+            ],
+            "platform_id": "standard-v1",
+            "resources": [
+              {
+                "core_fraction": 100,
+                "cores": 4,
+                "gpus": 0,
+                "memory": 4
+              }
+            ],
+            "scheduling_policy": [
+              {
+                "preemptible": false
+              }
+            ],
+            "secondary_disk": [],
+            "service_account_id": "",
+            "status": "running",
+            "timeouts": null,
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "zone"
+              }
+            ]
+          ],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozMDAwMDAwMDAwMDAsImRlbGV0ZSI6MzAwMDAwMDAwMDAwLCJ1cGRhdGUiOjMwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMSJ9",
+          "dependencies": [
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_iam_service_account_static_access_key",
+      "name": "sa-static-key",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_key": "YCAJEZP1bMvPEteXNd6lr0zSG",
+            "created_at": "2022-09-25T08:38:34Z",
+            "description": "static access key for object storage",
+            "encrypted_secret_key": null,
+            "id": "aje4m1vlil2vsi3nkkor",
+            "key_fingerprint": null,
+            "pgp_key": null,
+            "secret_key": "YCP6gvk46yExIYcNyF30e71vP3NtAWFUJgL6el4S",
+            "service_account_id": "ajeei942vm1rejr9fkmo"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.yandex_iam_service_account.sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_mdb_mysql_cluster",
+      "name": "db_cluster",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access": [
+              {
+                "data_lens": false,
+                "data_transfer": false,
+                "web_sql": false
+              }
+            ],
+            "allow_regeneration_host": false,
+            "backup_window_start": [
+              {
+                "hours": 0,
+                "minutes": 0
+              }
+            ],
+            "created_at": "2022-09-25T10:53:21Z",
+            "database": [],
+            "deletion_protection": true,
+            "description": "",
+            "environment": "PRODUCTION",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "health": "ALIVE",
+            "host": [
+              {
+                "assign_public_ip": false,
+                "backup_priority": 0,
+                "fqdn": "rc1a-hj70jtwgve7q8fh2.mdb.yandexcloud.net",
+                "name": "db01",
+                "priority": 80,
+                "replication_source": "",
+                "replication_source_name": "",
+                "subnet_id": "e9b7rghfllllpm1l79gf",
+                "zone": "ru-central1-a"
+              },
+              {
+                "assign_public_ip": false,
+                "backup_priority": 0,
+                "fqdn": "rc1a-3ccv1vur77gxu958.mdb.yandexcloud.net",
+                "name": "db02",
+                "priority": 20,
+                "replication_source": "rc1a-hj70jtwgve7q8fh2.mdb.yandexcloud.net",
+                "replication_source_name": "db01",
+                "subnet_id": "e9b7rghfllllpm1l79gf",
+                "zone": "ru-central1-a"
+              }
+            ],
+            "host_group_ids": [],
+            "id": "c9qndkrctkp2kdffec92",
+            "labels": {},
+            "maintenance_window": [
+              {
+                "day": "",
+                "hour": 0,
+                "type": "ANYTIME"
+              }
+            ],
+            "mysql_config": {
+              "binlog_transaction_dependency_tracking": "0",
+              "log_slow_rate_type": "0",
+              "sql_mode": "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+            },
+            "name": "my_db_cluster",
+            "network_id": "enp7qsbiu0ocldui5ttj",
+            "performance_diagnostics": [
+              {
+                "enabled": false,
+                "sessions_sampling_interval": 60,
+                "statements_sampling_interval": 600
+              }
+            ],
+            "resources": [
+              {
+                "disk_size": 20,
+                "disk_type_id": "network-ssd",
+                "resource_preset_id": "b2.medium"
+              }
+            ],
+            "restore": [],
+            "security_group_ids": [
+              "enpi9qu7fgg2pmhcl0du"
+            ],
+            "status": "RUNNING",
+            "timeouts": null,
+            "user": [],
+            "version": "8.0"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo5MDAwMDAwMDAwMDAsImRlbGV0ZSI6OTAwMDAwMDAwMDAwLCJ1cGRhdGUiOjM2MDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "data.yandex_vpc_network.network_dpl",
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a",
+            "yandex_vpc_security_group.mysql-sg"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_mdb_mysql_database",
+      "name": "db_wordpress",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "cluster_id": "c9qndkrctkp2kdffec92",
+            "id": "c9qndkrctkp2kdffec92:wordpress",
+            "name": "wordpress",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJyZWFkIjo2MDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "data.yandex_vpc_network.network_dpl",
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a",
+            "yandex_mdb_mysql_cluster.db_cluster",
+            "yandex_vpc_security_group.mysql-sg"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_mdb_mysql_user",
+      "name": "wordpress",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "authentication_plugin": null,
+            "cluster_id": "c9qndkrctkp2kdffec92",
+            "connection_limits": [],
+            "global_permissions": [],
+            "id": "c9qndkrctkp2kdffec92:wordpress",
+            "name": "wordpress",
+            "password": "wordpress",
+            "permission": [
+              {
+                "database_name": "wordpress",
+                "roles": [
+                  "ALL"
+                ]
+              }
+            ],
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6NjAwMDAwMDAwMDAwLCJyZWFkIjo2MDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9fQ==",
+          "dependencies": [
+            "data.yandex_vpc_network.network_dpl",
+            "data.yandex_vpc_subnet.subnets_dpl_ru_central1_a",
+            "yandex_mdb_mysql_cluster.db_cluster",
+            "yandex_mdb_mysql_database.db_wordpress",
+            "yandex_vpc_security_group.mysql-sg"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_resourcemanager_folder_iam_member",
+      "name": "sa-editor",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "b1g0cjulnkupf6ghdlko/storage.editor/serviceAccount:ajeei942vm1rejr9fkmo",
+            "member": "serviceAccount:ajeei942vm1rejr9fkmo",
+            "role": "storage.editor",
+            "sleep_after": null
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "data.yandex_iam_service_account.sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_vpc_security_group",
+      "name": "my-sg",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-10-04T06:44:27Z",
+            "description": "Description for security group",
+            "egress": [],
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "enpnerrn0h16uvdsm44t",
+            "ingress": [
+              {
+                "description": "Rule description 1",
+                "from_port": -1,
+                "id": "enpo07glosn1c9f8il4v",
+                "labels": {},
+                "port": -1,
+                "predefined_target": "",
+                "protocol": "ANY",
+                "security_group_id": "",
+                "to_port": -1,
+                "v4_cidr_blocks": [
+                  "194.152.34.0/23",
+                  "176.111.72.0/21"
+                ],
+                "v6_cidr_blocks": []
+              }
+            ],
+            "labels": {},
+            "name": "My security group",
+            "network_id": "enp7qsbiu0ocldui5ttj",
+            "status": "ACTIVE",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwLCJ1cGRhdGUiOjE4MDAwMDAwMDAwMH19",
+          "dependencies": [
+            "data.yandex_vpc_network.network_dpl"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_vpc_security_group",
+      "name": "mysql-sg",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-25T10:53:20Z",
+            "description": "",
+            "egress": [],
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "enpi9qu7fgg2pmhcl0du",
+            "ingress": [
+              {
+                "description": "MySQL",
+                "from_port": -1,
+                "id": "enp4s47322sch73h5c95",
+                "labels": {},
+                "port": 3306,
+                "predefined_target": "",
+                "protocol": "TCP",
+                "security_group_id": "",
+                "to_port": -1,
+                "v4_cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "v6_cidr_blocks": []
+              }
+            ],
+            "labels": {},
+            "name": "mysql-sg",
+            "network_id": "enp7qsbiu0ocldui5ttj",
+            "status": "ACTIVE",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwLCJ1cGRhdGUiOjE4MDAwMDAwMDAwMH19",
+          "dependencies": [
+            "data.yandex_vpc_network.network_dpl"
+          ]
+        }
+      ]
+    }
+  ]
+}
+

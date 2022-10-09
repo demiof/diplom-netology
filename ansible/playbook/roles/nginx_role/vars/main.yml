@@ -1,0 +1,12 @@
+---
+# vars file for kibana_role
+
+project_home: "/root/netol_do/diplom"
+project_home_ansible_playbook: "/root/netol_do/diplom/ansible/playbook"
+tf_home: "{{ project_home }}/terraform/"
+role_home: "{{ project_home }}/ansible/playbook/roles"
+role_nginx_home: "{{ role_home }}/nginx_role"
+packer_home: "{{ role_nginx_home }}/files"
+packer_hcl_www_file_name: "ubuntu-nat-instance-img.pkr.hcl"
+files_home: "{{ role_nginx_home }}/roles/files"
+img_id: "{{ lookup('env', 'TF_VAR_ubuntu-22-04-instance-linktelru') }}"

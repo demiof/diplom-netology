@@ -1,0 +1,151 @@
+
+upstream wwwlinktel {
+        server {{ server_name_www }}:{{ http_ch }};
+}
+
+
+upstream gitlablinktel {
+        server {{ server_name_gitlab }}:{{ http_ch }};
+}
+
+upstream runlinktel {
+        server {{ server_name_runner }}:{{ http_ch }};
+}
+
+upstream monlinktel_graf {
+        server {{ server_name_grafana }}:{{ http_ch }};
+#        server {{ server_name_grafana }}:{{ http_ch_graf }};
+
+}
+
+upstream monlinktel_prom {
+        server {{ server_name_prometheus }}:{{ http_ch }};
+#        server {{ server_name_prometheus }}:{{ http_ch_prom }};
+
+}
+
+upstream monlinktel_alert {
+        server {{ server_name_alertmanager }}:{{ http_ch }};
+#        server {{ server_name_alertmanager }}:{{ http_ch_alert }};
+
+}
+
+
+server {
+
+    server_name {{ server_name }};
+
+    root {{ root_dir }};
+
+    location / {
+        index html/index.nginx-debian.html index.php;
+    }
+
+    listen {{ http_ch }};
+
+
+
+}
+
+
+
+server {
+
+    listen {{ http_ch }};
+
+    server_name {{ server_name_www }};
+
+    location / {
+        proxy_pass              http://wwwlinktel/;
+    }
+
+}
+
+
+server {
+    
+    listen {{ http_ch }};
+
+    server_name {{ server_name_gitlab }};
+
+    location / {
+        proxy_pass              http://gitlablinktel/;
+    }
+
+
+
+}
+
+
+server {
+
+    listen {{ http_ch }};
+
+
+    server_name {{ server_name_runner }};
+
+    location / {
+        proxy_pass              http://runlinktel/;
+    }
+
+
+
+}
+
+server {
+    listen {{ http_ch }};
+    listen {{ http_ch_graf }};
+
+
+    server_name {{ server_name_grafana }};
+
+    location / {
+        proxy_pass              http://monlinktel_graf;
+    }
+
+
+
+}
+
+server {
+    listen {{ http_ch }};
+    listen {{ http_ch_prom }};
+
+
+    server_name {{ server_name_prometheus }};
+
+    location / {
+        proxy_pass              http://monlinktel_prom;
+    }
+
+
+
+}
+
+server {
+    listen {{ http_ch }};
+    listen {{ http_ch_alert }};
+
+
+    server_name {{ server_name_alertmanager }};
+
+    location / {
+        proxy_pass              http://monlinktel_alert;
+    }
+
+
+
+}
+
+        # proxy_http_version 1.1;
+        # proxy_buffering off;
+        # proxy_read_timeout    90;
+        # proxy_connect_timeout 90;
+        # proxy_redirect        off;
+        # proxy_set_header Host $host;
+        # proxy_set_header Upgrade $http_upgrade;
+        # proxy_set_header X-Real-IP $remote_addr;
+        # proxy_set_header X-Forwarded-Proto https;
+        # proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # proxy_set_header X-Forwarded-Port 443;
+        # proxy_set_header Proxy "";

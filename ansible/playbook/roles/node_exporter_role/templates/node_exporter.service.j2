@@ -1,0 +1,11 @@
+[Service]
+EnvironmentFile=-/etc/default/node_exporter
+User={{ user }}
+Group={{ group }}
+Type=simple
+ExecStart={{ path }}/node_exporter $NODE_EXPORTER_OPTS
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+ 
+[Install]
+WantedBy=multi-user.target

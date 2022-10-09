@@ -1,0 +1,85 @@
+---
+local:
+    hosts:
+        localhost
+    vars:
+        ansible_connection: local
+stack:
+    children:
+        other_nginx:
+            hosts:
+                applinktel:
+                    server_name: "www.link-tel.ru"
+                    host_name: "app.link-tel.ru"
+                    http_ch: 80
+                    https: 443
+                gitlablinktel:
+                    server_name: "gitlab.link-tel.ru"
+                    host_name: "gitlab.link-tel.ru"
+                    http_ch: 80
+                    https: 443
+                runlinktel:
+                    server_name: "runner.link-tel.ru"
+                    host_name: "runner.link-tel.ru"
+                    http_ch: 80
+                    https: 443
+        mon_nginx:
+            hosts:
+                monlinktel:
+                    server_name:
+                        graf: 
+                            domain: "grafana.link-tel.ru"
+                            http_ch: 80
+                            http_ch_graf: 81
+                            https: 3000
+                        prom: 
+                            domain: "prometheus.link-tel.ru"
+                            http_ch: 80
+                            http_ch_prom: 82
+                            https: 9090
+                        alert: 
+                            domain: "alertmanager.link-tel.ru"
+                            http_ch: 80
+                            http_ch_alert: 83
+                            https: 9093
+                    server_names:
+                        - "grafana.link-tel.ru" 
+                        - "prometheus.link-tel.ru"
+                        - "alertmanager.link-tel.ru"
+                    cert_d: "grafana.link-tel.ru,prometheus.link-tel.ru,alertmanager.link-tel.ru"
+                    host_name: "monitoring.link-tel.ru"
+        link_tel:
+            hosts:
+                linktel:
+                    server_name: "link-tel.ru"
+                    server_name_www: "www.link-tel.ru"
+                    server_name_gitlab: "gitlab.link-tel.ru"
+                    server_name_runner: "runner.link-tel.ru"
+                    server_name_grafana: "grafana.link-tel.ru"
+                    server_name_prometheus: "prometheus.link-tel.ru"
+                    server_name_alertmanager: "alertmanager.link-tel.ru"
+                    http_ch: 80
+                    http_ch_graf: 81
+                    http_ch_prom: 82
+                    http_ch_alert: 83
+                    https: 443
+                    https_graf: 3000
+                    https_prom: 9090
+                    https_alert: 9093
+                    host_name: "link-tel.ru"
+    vars:
+        vm_key: ~/.ssh/id_rsa
+        vm_user: ubuntu
+        root_dir: /var/www
+
+separ:
+    children:
+        nginx_proxy_host:
+            hosts:
+                linktel:
+        wordpress_host:
+            hosts:
+                applinktel:
+    vars:
+        ansible_user: "{{vm_user}}"
+        ansible_ssh_private_key_file: "{{vm_key}}"    

@@ -1,0 +1,721 @@
+---
+# defaults file for promgrafal_role
+
+####################### Prometheus ###############################
+
+prometheus_version: 2.36.2 #Prometheus package version. Also accepts latest as parameter. Only prometheus 2.x is supported
+prometheus_skip_install: false #Prometheus installation tasks gets skipped when set to true.
+prometheus_binary_local_dir: "" #Allows to use local packages instead of ones distributed on github. As parameter it takes a directory where prometheus AND promtool binaries are stored on host on which ansible is ran. This overrides prometheus_version parameter
+prometheus_config_dir: "/etc/prometheus" #Path to directory with prometheus configuration
+prometheus_db_dir: "/var/lib/prometheus" #Path to directory with prometheus database
+prometheus_read_only_dirs: [] #Additional paths that Prometheus is allowed to read (useful for SSL certs outside of the config directory)
+prometheus_web_listen_address: "0.0.0.0:{{ prometheus_port }}" #Address on which prometheus will be listening
+prometheus_web_config: "/etc/prometheus/prometheus_web_config.yml" #A Prometheus web config yaml for configuring TLS and auth.
+prometheus_web_external_url: "https://{{ prometheus_domain }}:{{ prometheus_port }}/" #External address on which prometheus is available. Useful when behind reverse proxy. Ex. http://example.org/prometheus
+prometheus_storage_retention: "1d" #Data retention period
+prometheus_storage_retention_size: "0" #Data retention period by size
+prometheus_config_flags_extra: {} #Additional configuration flags passed to prometheus binary at startup
+prometheus_alertmanager_config: [] #Configuration responsible for pointing where alertmanagers are. This should be specified as list in yaml format. It is compatible with official <alertmanager_config>
+prometheus_alert_relabel_configs: [] #Alert relabeling rules. This should be specified as list in yaml format. It is compatible with the official <alert_relabel_configs>
+prometheus_global: "{ scrape_interval: 10s, scrape_timeout: 10s, evaluation_interval: 10s }" #Prometheus global config. Compatible with official configuration
+prometheus_remote_write: [] #Remote write. Compatible with official configuration
+prometheus_remote_read: [] #Remote read. Compatible with official configuration
+#      prometheus_external_labels environment: "{{ ansible_fqdn | default(ansible_host) | default(inventory_hostname) }}" #Provide map of additional labels which will be added to any time series or alerts when communicating with external systems
+prometheus_targets: {} #Targets which will be scraped. Better example is provided in our demo site
+#      prometheus_scrape_configs: "defaults/main.yml#L58" #Prometheus scrape jobs provided in same format as in official docs
+prometheus_config_file: "prometheus.yml.j2" #Variable used to provide custom prometheus configuration file in form of ansible template
+prometheus_web_config_file: "prometheus_web_config.yml.j2" #Variable used to provide custom prometheus web configuration file in form of ansible template
+prometheus_alert_rules:  #Full list of alerting rules which will be copied to {{ prometheus_config_dir }}/rules/ansible_managed.rules. Alerting rules can be also provided by other files located in {{ prometheus_config_dir }}/rules/ which have *.rules extension
+  - alert: Watchdog
+    expr: vector(1)
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      description: "This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty."
+      summary: 'Ensure entire alerting pipeline is functional'
+  - alert: InstanceDown
+    expr: 'up == 0'
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.{% endraw %}'
+      summary: '{% raw %}Instance {{ $labels.instance }} down{% endraw %}'
+  - alert: RebootRequired
+    expr: 'node_reboot_required > 0'
+    labels:
+      severity: warning
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} requires a reboot.{% endraw %}'
+      summary: '{% raw %}Instance {{ $labels.instance }} - reboot required{% endraw %}'
+  - alert: NodeFilesystemSpaceFillingUp
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left and is filling up.{% endraw %}'
+      summary: 'Filesystem is predicted to run out of space within the next 24 hours.'
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node\",fstype!=\"\"} / node_filesystem_size_bytes{job=\"node\",fstype!=\"\"} * 100 < 40\nand\n  predict_linear(node_filesystem_avail_bytes{job=\"node\",fstype!=\"\"}[6h], 24*60*60) < 0\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeFilesystemSpaceFillingUp
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left and is filling up fast.{% endraw %}'
+      summary: 'Filesystem is predicted to run out of space within the next 4 hours.'
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node\",fstype!=\"\"} / node_filesystem_size_bytes{job=\"node\",fstype!=\"\"} * 100 < 20\nand\n  predict_linear(node_filesystem_avail_bytes{job=\"node\",fstype!=\"\"}[6h], 4*60*60) < 0\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: critical
+  - alert: NodeFilesystemAlmostOutOfSpace
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.{% endraw %}'
+      summary: 'Filesystem has less than 5% space left.'
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node\",fstype!=\"\"} / node_filesystem_size_bytes{job=\"node\",fstype!=\"\"} * 100 < 5\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeFilesystemAlmostOutOfSpace
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.{% endraw %}'
+      summary: 'Filesystem has less than 3% space left.'
+    expr: "(\n  node_filesystem_avail_bytes{job=\"node\",fstype!=\"\"} / node_filesystem_size_bytes{job=\"node\",fstype!=\"\"} * 100 < 3\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: critical
+  - alert: NodeFilesystemFilesFillingUp
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up.{% endraw %}'
+      summary: 'Filesystem is predicted to run out of inodes within the next 24 hours.'
+    expr: "(\n  node_filesystem_files_free{job=\"node\",fstype!=\"\"} / node_filesystem_files{job=\"node\",fstype!=\"\"} * 100 < 40\nand\n  predict_linear(node_filesystem_files_free{job=\"node\",fstype!=\"\"}[6h], 24*60*60) < 0\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeFilesystemFilesFillingUp
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up fast.{% endraw %}'
+      summary: 'Filesystem is predicted to run out of inodes within the next 4 hours.'
+    expr: "(\n  node_filesystem_files_free{job=\"node\",fstype!=\"\"} / node_filesystem_files{job=\"node\",fstype!=\"\"} * 100 < 20\nand\n  predict_linear(node_filesystem_files_free{job=\"node\",fstype!=\"\"}[6h], 4*60*60) < 0\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: critical
+  - alert: NodeFilesystemAlmostOutOfFiles
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.{% endraw %}'
+      summary: 'Filesystem has less than 5% inodes left.'
+    expr: "(\n  node_filesystem_files_free{job=\"node\",fstype!=\"\"} / node_filesystem_files{job=\"node\",fstype!=\"\"} * 100 < 5\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeFilesystemAlmostOutOfFiles
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.{% endraw %}'
+      summary: 'Filesystem has less than 3% inodes left.'
+    expr: "(\n  node_filesystem_files_free{job=\"node\",fstype!=\"\"} / node_filesystem_files{job=\"node\",fstype!=\"\"} * 100 < 3\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: critical
+  - alert: NodeNetworkReceiveErrs
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last two minutes.{% endraw %}'
+      summary: 'Network interface is reporting many receive errors.'
+    expr: "increase(node_network_receive_errs_total[2m]) > 10\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeNetworkTransmitErrs
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} transmit errors in the last two minutes.{% endraw %}'
+      summary: 'Network interface is reporting many transmit errors.'
+    expr: "increase(node_network_transmit_errs_total[2m]) > 10\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeHighNumberConntrackEntriesUsed
+    annotations:
+      description: '{% raw %}{{ $value | humanizePercentage }} of conntrack entries are used{% endraw %}'
+      summary: 'Number of conntrack are getting close to the limit'
+    expr: "(node_nf_conntrack_entries / node_nf_conntrack_entries_limit) > 0.75\n"
+    labels:
+      severity: warning
+  - alert: NodeClockSkewDetected
+    annotations:
+      message: '{% raw %}Clock on {{ $labels.instance }} is out of sync by more than 300s. Ensure NTP is configured correctly on this host.{% endraw %}'
+      summary: 'Clock skew detected.'
+    expr: "(\n  node_timex_offset_seconds > 0.05\nand\n  deriv(node_timex_offset_seconds[5m]) >= 0\n)\nor\n(\n  node_timex_offset_seconds < -0.05\nand\n  deriv(node_timex_offset_seconds[5m]) <= 0\n)\n"
+    for: 10m
+    labels:
+      severity: warning
+  - alert: NodeClockNotSynchronising
+    annotations:
+      message: '{% raw %}Clock on {{ $labels.instance }} is not synchronising. Ensure NTP is configured on this host.{% endraw %}'
+      summary: 'Clock not synchronising.'
+    expr: "min_over_time(node_timex_sync_status[5m]) == 0\n"
+    for: 10m
+    labels:
+      severity: warning
+
+
+
+prometheus_alert_rules_files: #"defaults/main.yml#L78" #List of folders where ansible will look for files containing alerting rules which will be copied to {{ prometheus_config_dir }}/rules/. Files must have *.rules extension
+  - rules/*.rules 
+
+prometheus_custom_alert_rules_files:
+  - templates/custom_rules/*.rules
+
+prometheus_static_targets_files: #"defaults/main.yml#L78" #List of folders where ansible will look for files containing custom static target configuration files which will be copied to {{ prometheus_config_dir }}/file_sd/.
+  - templates/custom_targets/*.yml
+  - templates/custom_targets/*.json
+
+
+
+####################### Grafana ###############################
+
+
+
+grafana_use_provisioning: true #Use Grafana provisioning capability when possible (grafana_version=latest will assume >= 5.0).
+grafana_provisioning_synced: false #Ensure no previously provisioned dashboards are kept if not referenced anymore.
+grafana_version: "{{ grafana_ver }}" #Grafana package version
+grafana_yum_repo_template: "etc/yum.repos.d/grafana.repo.j2" #Yum template to use
+grafana_manage_repo: true #Manage package repo (or don't)
+grafana_instance: "{{ ansible_fqdn | default(ansible_host) | default(inventory_hostname) }}" #Grafana instance name
+grafana_logs_dir: "/var/log/grafana" #Path to logs directory
+grafana_data_dir: "/var/lib/grafana" #Path to database directory
+grafana_address: "0.0.0.0" #Address on which grafana listens
+grafana_port: "3000" #port on which grafana listens
+grafana_cap_net_bind_service: false #Enables the use of ports below 1024 without root privileges by leveraging the 'capabilities' of the linux kernel. read: http://man7.org/linux/man-pages/man7/capabilities.7.html
+grafana_url: "https://{{ grafana_address }}:{{ grafana_port }}" #Full URL used to access Grafana from a web browser
+grafana_api_url: "{{ grafana_domain }}" #URL used for API calls in provisioning if different from public URL. See this issue.
+grafana_domain: "{{ ansible_fqdn | default(ansible_host) | default('localhost') }}" #setting is only used in as a part of the root_url option. Useful when using GitHub or Google OAuth
+
+grafana_server: 
+  protocol: https
+  enforce_domain: false
+  socket: ""
+  cert_key: "{{ grafana_key }}"
+  cert_file: "{{ grafana_cert }}"
+  enable_gzip: false
+  static_root_path: public
+  router_logging: false
+  serve_from_sub_path: false
+#"{ protocol: https, enforce_domain: false, socket: '', cert_key: '', cert_file: '', enable_gzip: false, static_root_path: public, router_logging: false }" #server configuration section
+
+
+# Variables correspond to ones in grafana.ini configuration file
+# Security
+grafana_security:
+  admin_user: "{{ prom_admin }}"
+  admin_password: "{{ prom_pass }}"
+#  secret_key: ""
+#  login_remember_days: 7
+#  cookie_username: grafana_user
+#  cookie_remember_name: grafana_remember
+#  disable_gravatar: true
+#  data_source_proxy_whitelist:
+# grafana_security: "{ admin_user: {{ prom_admin }}, admin_password: {{ prom_pass }} }" #security configuration section
+
+
+# Database setup
+grafana_database:
+  type: sqlite3
+#  host: 127.0.0.1:3306
+#  name: grafana
+#  user: root
+#  password: ""
+#  url: ""
+#  ssl_mode: disable
+#  path: grafana.db
+#  max_idle_conn: 2
+#  max_open_conn: ""
+#  log_queries: ""
+# grafana_database: "{ type: sqlite3 }" #database configuration section
+
+
+# Remote cache
+grafana_remote_cache: {}
+
+
+# User management and registration
+grafana_welcome_email_on_sign_up: false
+grafana_users:
+  allow_sign_up: false
+  # allow_org_create: true
+  # auto_assign_org: true
+  auto_assign_org_role: Viewer
+  # login_hint: "email or username"
+  default_theme: dark
+  # external_manage_link_url: ""
+  # external_manage_link_name: ""
+  # external_manage_info: ""
+# grafana_users: "{ allow_sign_up: false, auto_assign_org_role: Viewer, default_theme: dark }" #users configuration section
+
+
+# grafana authentication mechanisms
+grafana_auth: {}
+#  disable_login_form: false
+#  oauth_auto_login: false
+#  disable_signout_menu: false
+#  signout_redirect_url: ""
+#  anonymous:
+#    org_name: "Main Organization"
+#    org_role: Viewer
+#  ldap:
+#    config_file: "/etc/grafana/ldap.toml"
+#    allow_sign_up: false
+#  basic:
+#    enabled: true
+
+
+grafana_ldap: {}
+#  verbose_logging: false
+#  servers:
+#    host: 127.0.0.1
+#    port: 389 # 636 for SSL
+#    use_ssl: false
+#    start_tls: false
+#    ssl_skip_verify: false
+#    root_ca_cert: /path/to/certificate.crt
+#    bind_dn: "cn=admin,dc=grafana,dc=org"
+#    bind_password: grafana
+#    search_filter: "(cn=%s)" # "(sAMAccountName=%s)" on AD
+#    search_base_dns:
+#      - "dc=grafana,dc=org"
+#    group_search_filter: "(&(objectClass=posixGroup)(memberUid=%s))"
+#    group_search_base_dns:
+#      - "ou=groups,dc=grafana,dc=org"
+#    attributes:
+#      name: givenName
+#      surname: sn
+#      username: sAMAccountName
+#      member_of: memberOf
+#      email: mail
+#  group_mappings:
+#    - name: Main Org.
+#      id: 1
+#      groups:
+#        - group_dn: "cn=admins,ou=groups,dc=grafana,dc=org"
+#          org_role: Admin
+#        - group_dn: "cn=editors,ou=groups,dc=grafana,dc=org"
+#          org_role: Editor
+#        - group_dn: "*"
+#          org_role: Viewer
+#    - name: Alternative Org
+#      id: 2
+#      groups:
+#        - group_dn: "cn=alternative_admins,ou=groups,dc=grafana,dc=org"
+#          org_role: Admin
+
+
+grafana_session: {}
+#  provider: file
+#  provider_config: "sessions"
+
+
+grafana_analytics: {}
+#  reporting_enabled: true
+#  google_analytics_ua_id: ""
+
+
+# Set this for mail notifications
+grafana_smtp: {}
+#  host:
+#  user:
+#  password:
+#  from_address:
+
+
+# Enable grafana alerting mechanism
+grafana_alerting:
+  execute_alerts: true
+#  error_or_timeout: 'alerting'
+#  nodata_or_nullvalues: 'no_data'
+#  concurrent_render_limit: 5
+
+
+# Grafana logging configuration
+grafana_log:
+# mode: 'console file'
+# level: info
+
+
+# Internal grafana metrics system
+grafana_metrics: {}
+#  interval_seconds: 10
+#  graphite:
+#    address: "localhost:2003"
+#    prefix: "prod.grafana.%(instance_name)s"
+
+
+# Distributed tracing options
+grafana_tracing: {}
+#  address: "localhost:6831"
+#  always_included_tag: "tag1:value1,tag2:value2"
+#  sampler_type: const
+#  sampler_param: 1
+
+# External image store
+grafana_image_storage: {}
+#  provider: gcs
+#  key_file:
+#  bucket:
+#  path:
+
+grafana_snapshots: {}
+#  external_enabled: true
+#  external_snapshot_url: "https://snapshots-origin.raintank.io"
+#  external_snapshot_name: "Publish to snapshot.raintank.io"
+#  snapshot_remove_expired: true
+#  snapshot_TTL_days: 90
+
+
+# Dashboards from https://grafana.com/dashboards
+grafana_dashboards: []
+#  - dashboard_id: '4271'
+#    revision_id: '3'
+#    datasource: 'Prometheus'
+#  - dashboard_id: '1860'
+#    revision_id: '4'
+#    datasource: 'Prometheus'
+#  - dashboard_id: '358'
+#    revision_id: '1'
+#    datasource: 'Prometheus'
+
+grafana_dashboards_dir: "dashboards"
+
+# Datasources to configure
+grafana_datasources: []
+#  - name: "Prometheus"
+#    type: "prometheus"
+#    access: "proxy"
+#    url: "http://prometheus.mydomain"
+#    basicAuth: true
+#    basicAuthUser: "admin"
+#    basicAuthPassword: "password"
+#    isDefault: true
+#    jsonData:
+#      tlsAuth: false
+#      tlsAuthWithCACert: false
+#      tlsSkipVerify: true
+
+grafana_environment: {} #Optional Environment param for Grafana installation, useful ie for setting http_proxy
+
+#######
+# Plugins from https://grafana.com/plugins
+grafana_plugins: []
+#  - raintank-worldping-app
+
+
+# Alert notification channels to configure
+grafana_alert_notifications: []
+#   - name: "Email Alert"
+#     type: "email"
+#     isDefault: true
+#     settings:
+#       addresses: "example@example.com"
+
+# API keys to configure
+grafana_api_keys: []
+#  - name: "admin"
+#    role: "Admin"
+#  - name: "viewer"
+#    role: "Viewer"
+#  - name: "editor"
+#    role: "Editor"
+
+# The location where the keys should be stored.
+grafana_api_keys_dir: "{{ lookup('env', 'HOME') }}/grafana/keys"
+
+# Panels configurations
+grafana_panels: {}
+#  disable_sanitize_html: false
+#  enable_alpha: false
+
+
+
+
+
+
+
+####################### Alertmanager ###############################
+
+
+
+alertmanager_version: '{{ alertmanager_version }}'
+alertmanager_binary_local_dir: ''
+
+
+alertmanager_systemd_version: '{{ alertmanager_systemd_version }}'
+
+alertmanager_config_dir: /etc/alertmanager
+alertmanager_db_dir: /var/lib/alertmanager
+
+alertmanager_config_file: 'alertmanager.yml.j2'
+
+alertmanager_template_files: templates/*.tmpl
+
+_alertmanager_binary_install_dir: '/usr/local/bin'
+
+# The expected location of the amtool configuration file
+_alertmanager_amtool_config_dir: '/etc/amtool'
+
+alertmanager_web_listen_address: '0.0.0.0:{{ alertmanager_port }}'
+alertmanager_web_external_url: 'https://{{ alertmanager_domain }}:{{ alertmanager_port }}/'
+
+alertmanager_http_config:
+  tls_config:
+  # # CA certificate to validate the server certificate with.
+  # [ ca_file: <filepath> ]
+    ca_file: '{{ alertmanager_cert }}'
+
+  # Certificate and key files for client cert authentication to the server.
+    cert_file: '{{ alertmanager_cert }}'
+    key_file: '{{ alertmanager_key }}'
+
+  # ServerName extension to indicate the name of the server.
+  # http://tools.ietf.org/html/rfc4366#section-3.1
+  # [ server_name: <string> ]
+    server_name: '{{ alertmanager_domain }}' 
+
+  # Disable validation of the server certificate.
+  # [ insecure_skip_verify: <boolean> | default = false]
+
+
+alertmanager_resolve_timeout: 3m
+
+alertmanager_config_flags_extra: {}
+# alertmanager_config_flags_extra:
+#   data.retention: 10
+
+# SMTP default params
+alertmanager_smtp: {}
+# alertmanager_smtp:
+#   from: ''
+#   smarthost: ''
+#   auth_username: ''
+#   auth_password: ''
+#   auth_secret: ''
+#   auth_identity: ''
+#   require_tls: "True"
+
+# Default values you can see here -> https://prometheus.io/docs/alerting/configuration/
+alertmanager_slack_api_url: ''
+alertmanager_pagerduty_url: ''
+alertmanager_opsgenie_api_key: ''
+alertmanager_opsgenie_api_url: ''
+alertmanager_victorops_api_key: ''
+alertmanager_victorops_api_url: ''
+alertmanager_hipchat_api_url: ''
+alertmanager_hipchat_auth_token: ''
+alertmanager_wechat_url: ''
+alertmanager_wechat_secret: ''
+alertmanager_wechat_corp_id: ''
+
+# First read: https://github.com/prometheus/alertmanager#high-availability
+alertmanager_cluster:
+  listen-address: ""
+
+# alertmanager_cluster:
+#   listen-address: "{{ ansible_default_ipv4.address }}:6783"
+#   peers:
+#     - "{{ ansible_default_ipv4.address }}:6783"
+#     - "demo.cloudalchemy.org:6783"
+
+
+alertmanager_route:
+  receiver: default-telegram
+  continue: false
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+alertmanager_receivers:
+  - name: default-telegram
+    telegram_configs:
+      - send_resolved: true
+        http_config:
+          follow_redirects: true
+        api_url: '{{ t_bot_api_url }}'
+        bot_token: '{{ t_bot_token }}'
+        chat_id: '{{ t_bot_chat_id }}'
+        message: 'test123'
+        #message: '{{ template "telegram.default.text" . }}'
+        parse_mode: HTML
+        #templates: []
+
+      # # Whether to notify about resolved alerts.
+      # # [ send_resolved: <boolean> | default = true ]
+      # send_resolved: true
+
+      # # The Telegram API URL i.e. https://api.telegram.org.
+      # # If not specified, default API URL will be used.
+      # # [ api_url: <string> | default = global.telegram_api_url ]
+      # api_url: "{{ t_api_url }}"
+
+      # # Telegram bot token
+      # # [ bot_token: <string> ]
+      # bot_token: "{{ t_token }}"
+
+      # # ID of the chat where to send the messages.
+      # # [ chat_id: <int> ]
+
+      # # Message template
+      # # [ message: <tmpl_string> default = '{{ template "telegram.default.message" .}}' ]
+
+      # # Disable telegram notifications
+      # #[ disable_notifications: <boolean> | default = false ]
+      # disable_notifications: false
+
+      # # Parse mode for telegram message, supported values are MarkdownV2, Markdown, HTML and empty string for plain text.
+      # # [ parse_mode: <string> | default = "MarkdownV2" ]
+      # parse_mode: 'MarkdownV2'
+
+      # # The HTTP client's configuration.
+      # #[ http_config: <http_config> | default = global.http_config ]
+      # http_config: 'global.http_config'
+
+# alertmanager_receivers:
+#   - name: telegram
+#     telegram_config:
+#       - send_resolved: true
+#         channel: '#alerts'
+#         test: '{{ template "telegram.link-tel.text" }}'
+#     templates:
+#       - '/etc/alertmanager/templates/link-tel.tmpl'
+
+alertmanager_inhibit_rules: []
+# alertmanager_inhibit_rules:
+#   - target_match:
+#       label: value
+#     source_match:
+#       label: value
+#     equal: ['dc', 'rack']
+#   - target_match_re:
+#       label: value1|value2
+#     source_match_re:
+#       label: value3|value5
+
+# alertmanager_route:
+# # alertmanager_route:
+# #   group_by: ['alertname', 'cluster', 'service']
+# #   group_wait: 30s
+# #   group_interval: 5m
+# #   repeat_interval: 4h
+# #   receiver: slack
+#   group_by: ['alertname', 'cluster', 'service']
+#   group_wait: 30s
+#   group_interval: 5m
+#   repeat_interval: 4h
+#   receiver: telegram
+#   routes:
+#     - match_re:
+#         severety: "warning|critical"
+#         owner: team-X
+#   templates:
+#     - /etc/alertmanager/templates/*.tmpl
+
+# #    - match:
+# #       owner: team-Y
+# #      receiver: team-Y-pager
+
+# #   # This routes performs a regular expression match on alert labels to
+# #   # catch alerts that are related to a list of services.
+# #     - match_re:
+# #         service: ^(foo1|foo2|baz)$
+# #       receiver: team-X-mails
+# #       # The service has a sub-route for critical alerts, any alerts
+# #       # that do not match, i.e. severity != critical, fall-back to the
+# #       # parent node and are sent to 'team-X-mails'
+# #       routes:
+# #         - match:
+# #             severity: critical
+# #           receiver: team-X-pager
+# #     - match:
+# #         service: files
+# #       receiver: team-Y-mails
+# #       routes:
+# #         - match:
+# #             severity: critical
+# #           receiver: team-Y-pager
+# #     # This route handles all alerts coming from a database service. If there's
+# #     # no team to handle it, it defaults to the DB team.
+# #     - match:
+# #         service: database
+# #       receiver: team-DB-pager
+# #       # Also group alerts by affected database.
+# #       group_by: [alertname, cluster, database]
+# #       routes:
+# #         - match:
+# #             owner: team-X
+# #           receiver: team-X-pager
+# #         - match:
+# #             owner: team-Y
+# #           receiver: team-Y-pager
+# #       routes:
+# #         - match:
+# #             owner: team-X
+# #           receiver: team-X-pager
+# #         - match:
+# #             owner: team-Y
+# #           receiver: team-Y-pager
+
+
+
+
+
+# The template for amtool's configuration
+alertmanager_amtool_config_file: 'amtool.yml.j2'
+
+# Location (URL) of the alertmanager
+alertmanager_amtool_config_alertmanager_url: "{{ alertmanager_web_external_url }}"
+
+# Extended output of `amtool` commands, use '' for less verbosity
+alertmanager_amtool_config_output: 'extended'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# alertmanager_version: 0.21.0 #Alertmanager package version. Also accepts latest as parameter.
+# alertmanager_binary_local_dir: "" #Allows to use local packages instead of ones distributed on github. As parameter it takes a directory where alertmanager AND amtool binaries are stored on host on which ansible is ran. This overrides alertmanager_version parameter
+# alertmanager_web_listen_address: 0.0.0.0:9093 #Address on which alertmanager will be listening
+# alertmanager_web_external_url: "https://alertmanager.link-tel.ru:9093/" #External address on which alertmanager is available. Useful when behind reverse proxy. Ex. example.org/alertmanager
+# alertmanager_config_dir: "/etc/alertmanager" #Path to directory with alertmanager configuration
+# alertmanager_db_dir: "/var/lib/alertmanager" #Path to directory with alertmanager database
+# alertmanager_config_file: "alertmanager.yml.j2" #Variable used to provide custom alertmanager configuration file in form of ansible template
+# alertmanager_config_flags_extra: {} #Additional configuration flags passed to prometheus binary at startup
+# alertmanager_template_files: ['alertmanager/templates/*.tmpl'] #List of folders where ansible will look for template files which will be copied to {{ alertmanager_config_dir }}/templates/. Files must have *.tmpl extension
+# alertmanager_resolve_timeout: "3m" #Time after which an alert is declared resolved
+# alertmanager_smtp: {} #SMTP (email) configuration
+# alertmanager_http_config: {} #Http config for using custom webhooks
+# alertmanager_slack_api_url: "" #Slack webhook url
+# alertmanager_pagerduty_url: "" #Pagerduty webhook url
+# alertmanager_opsgenie_api_key: "" #Opsgenie webhook key
+# alertmanager_opsgenie_api_url: "" #Opsgenie webhook url
+# alertmanager_victorops_api_key: "" #VictorOps webhook key
+# alertmanager_victorops_api_url: "" #VictorOps webhook url
+# alertmanager_hipchat_api_url: "" #Hipchat webhook url
+# alertmanager_hipchat_auth_token: "" #Hipchat authentication token
+# alertmanager_wechat_url: "" #Enterprise WeChat webhook url
+# alertmanager_wechat_secret: "" #Enterprise WeChat secret token
+# alertmanager_wechat_corp_id: "" #Enterprise WeChat corporation id
+# alertmanager_cluster: "{listen-address: ''}" #HA cluster network configuration. Disabled by default. More information in alertmanager readme
+# alertmanager_receivers: [] #A list of notification receivers. Configuration same as in official docs
+# alertmanager_inhibit_rules: [] #List of inhibition rules. Same as in official docs
+# alertmanager_route: {} #Alert routing. More in official docs
+# alertmanager_amtool_config_file: "amtool.yml.j2" #Template for amtool config
+# alertmanager_amtool_config_alertmanager_url: "alertmanager_web_external_url" #URL of the alertmanager
+# alertmanager_amtool_config_output: "extended" #Extended output, use "" for simple output.

@@ -1,0 +1,501 @@
+---
+
+- name: Create working vms
+  hosts: local
+  roles: 
+#    - nginx_role
+#    - wordpress_role
+  gather_facts: no
+  become: yes
+  become_user: root
+  tasks:
+
+  - name: prepare ssh_conf
+    ansible.builtin.template:
+      src: templates/ssh_config.j2
+      dest: /etc/ssh/ssh_config.d/ssh.conf
+    tags: ssh_jump
+
+- name: Prepare nginx conf on all hosts except gitlab.link-tel.ru, link-tel.ru, monitor.link-tel.ru
+  hosts: other_nginx:!gitlablinktel:!runlinktel
+  become: yes
+  tasks:
+  
+  - name: Copy nginx conf file 
+    become: yes
+    become_user: root
+    ansible.builtin.template:
+      src: templates/nginx_others_config.j2
+      dest: /etc/nginx/sites-available/default
+      owner: "{{ nginx_user }}"
+      group: "{{ nginx_group }}"
+      mode: '0644'
+      backup: yes
+    tags: 
+      - certbot
+      - nginx_up_conf
+
+- name: Prepare nginx conf on monitoring.link-tel.ru
+  hosts: mon_nginx
+  become: yes
+  tasks:
+  
+  - name: Copy nginx conf file for host_names
+    become: yes
+    become_user: root
+    ansible.builtin.template:
+      src: 'templates/nginx_{{ item }}_config.j2'
+      dest: '/etc/nginx/sites-available/{{ item }}'
+      owner: "{{ nginx_user }}"
+      group: "{{ nginx_group }}"
+      mode: '0644'
+      backup: yes
+    with_items: "{{ host_name }}"
+    tags: 
+      - certbot
+      - nginx_conf_mon
+
+  - name: Create a symbolic links
+    ansible.builtin.file:
+      src: '/etc/nginx/sites-available/{{ item }}'
+      dest: '/etc/nginx/sites-enabled/{{ item }}'
+      owner: "{{ nginx_user }}"
+      group: "{{ nginx_group }}"
+      mode: '0644'
+      state: link
+    with_items: "{{ host_name }}"
+    tags: 
+      - certbot
+      - nginx_conf_mon
+
+  - name: Create a directories if they does not exist
+    ansible.builtin.file:
+      path: "/var/www/{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      owner: "{{ nginx_user }}"
+      group: "{{ nginx_group }}"
+      state: directory
+      mode: '0755'
+    with_items: "{{ server_names }}"
+    tags: 
+      - certbot
+      - nginx_conf_mon
+
+  - name: Restart nginx
+    become: yes
+    become_user: root
+    ansible.builtin.service: name=nginx state=restarted enabled=yes
+    tags:  
+      - certbot
+      - nginx_conf_mon
+
+
+
+- name: Prepare nginx conf listen 80 on link-tel main hosts
+  hosts: link_tel
+  tasks:
+
+  - name: prepare nginx_conf to linktel
+    become: yes
+    become_user: root
+    ansible.builtin.template:
+      src: templates/nginx_http_config.j2
+      dest: "{{ nginx_conf }}"
+      backup: yes
+    tags:
+      - certbot 
+      - certbot_mon
+      - nginx_conf_linktel
+
+  - name: add host names to /etc/hosts
+    become: yes
+    become_user: root
+    ansible.builtin.template:
+      src: templates/hosts_link_tel.j2
+      dest: /etc/hosts
+      backup: yes
+    tags:
+      - certbot 
+      - certbot_mon
+      - nginx_conf_linktel
+      - hosts
+
+  - name: Restart nginx
+    become: yes
+    become_user: root
+    ansible.builtin.service: name=nginx state=restarted enabled=yes
+    tags:  
+      - certbot 
+      - certbot_mon
+      - nginx_conf_linktel
+
+- name: Preparation on stack before certbot install or update
+  hosts: stack:!runlinktel
+  roles:
+    - node_exporter_role
+  tags: certbot  
+  tasks:
+
+  - name: Check is certbot cert files exists
+    become: yes
+    become_user: root 
+    ansible.builtin.shell: "certbot certificates"
+    register: is_certs
+    tags: 
+      - certbot
+      - certbot_check
+
+  - name: Search if no error in certbot certificates output
+    ansible.builtin.set_fact:
+      is_error: "{{ is_certs.stdout | regex_search('invalid', ignorecase=True) }}"
+    tags:
+      - certbot
+      - certbot_check
+
+  
+  - name: Search if no certificates found in certbot certificates output
+    ansible.builtin.set_fact:
+      is_exist: "{{ is_certs.stdout | regex_search(_regex, multiline=True, ignorecase=True) }}"
+    vars:
+      _regex: 'no.*cert.*found'
+    tags:
+      - certbot
+      - certbot_check
+
+  - name: config localtime & hostname
+    become: yes
+    become_user: root
+    ansible.builtin.shell: |
+      sudo hostname "{{ host_name }}"
+      sudo echo "{{ host_name }}" > /etc/hostname 
+      sudo rm /etc/localtime
+      sudo ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+    tags:
+      - certbot
+      - certbot_check
+
+  - name: deploy resolv.conf template
+    become: yes
+    become_user: root
+    ansible.builtin.template:
+      src: templates/resolveconf.j2
+      dest: /etc/resolv.conf
+      owner: root
+      group: root
+      mode: 0644
+      backup: yes
+    tags:
+      - certbot
+      - certbot_check
+
+  - name: clean hosts
+    become: yes
+    become_user: root
+    ansible.builtin.shell: | 
+      sudo sed -i '/link-tel/d' /etc/hosts
+      sudo sed -i '/-e/d' /etc/hosts
+    tags:
+      - certbot
+      - certbot_check
+  
+  - name: deploy /etc/hosts file
+    become: yes
+    become_user: root
+    ansible.builtin.shell: "echo -e '\n\n{{ linktelint }} link-tel.ru\n{{ applinktel  }} app.link-tel.ru www.link-tel.ru\n{{ gitlablinktel }} \
+      gitlab.link-tel.ru\n{{ runlinktel }} runner.link-tel.ru\n{{ monlinktel }} monitoring.link-tel.ru\n{{ monlinktel }} grafana.link-tel.ru\n\
+      {{ monlinktel }} prometheus.link-tel.ru\n{{ monlinktel }} alertmanager.link-tel.ru\n' >> /etc/hosts" 
+    tags:
+      - certbot
+      - certbot_check
+
+  - name: change root_dir owner and mmode
+    become: yes
+    become_user: root
+    ansible.builtin.file:
+      path: "{{ root_dir }}"
+      owner: "{{ nginx_user }}"
+      group: "{{ nginx_group }}"
+      mode: '0755'
+      recurse: yes
+    tags:
+      - certbot
+      - certbot_check
+
+- name: Certbot installation on stack except mon
+  hosts: other_nginx:!gitlablinktel:!runlinktel
+  tasks:
+
+  - name: Run certbot
+    become: yes
+    become_user: root 
+    ansible.builtin.shell: sudo certbot certonly -n --nginx -d "{{ server_name }}" --agree-tos -m demi@corp.linkintel.ru --cert-name "{{ server_name }}"
+    tags: 
+      - certbot
+      - nginx_conf_linktel
+
+  - name: Install certbot
+    become: yes
+    become_user: root 
+    ansible.builtin.shell: sudo certbot install --nginx -n --cert-name "{{ server_name }}"
+    tags: 
+      - certbot
+      - nginx_conf_linktel
+
+  - name: Fetch all privkeys 
+    become: yes
+    become_user: root
+    ansible.builtin.fetch:
+      src: "/etc/letsencrypt/live/{{ server_name }}/privkey.pem"
+      dest: "files/certs/{{ server_name }}_privkey.pem"
+      flat: yes
+    tags:
+      - certbot
+      - nginx_up
+
+  - name: Fetch all fullchain 
+    become: yes
+    become_user: root
+    ansible.builtin.fetch:
+      src: "/etc/letsencrypt/live/{{ server_name }}/fullchain.pem"
+      dest: "files/certs/{{ server_name }}_fullchain.pem"
+      flat: yes
+    tags:
+      - certbot
+      - nginx_up
+
+  - name: Restart nginx
+    become: yes
+    become_user: root
+    ansible.builtin.service: name=nginx state=restarted enabled=yes
+    tags: certbot
+
+- name: Certbot installation on mon
+  hosts: monlinktel
+  tasks:
+
+#   - name: Create cert by certbot
+#     become: yes
+#     become_user: root 
+#     ansible.builtin.shell:
+# #      /usr/bin/certbot --nginx -n -d "{{ server_name.graf.domain }}" --http-01-port "{{ server_name.graf.http_ch }}" --agree-tos -m "{{ email }}" --https-port "{{ server_name.graf.https }}" 
+# #      /usr/bin/certbot --nginx -n -d "{{ server_name.prom.domain }}" --http-01-port "{{ server_name.prom.http_ch }}" --agree-tos -m "{{ email }}" --https-port "{{ server_name.prom.https }}" 
+# #      /usr/bin/certbot --nginx -n -d "{{ server_name.alert.domain }}" --http-01-port "{{ server_name.alert.http_ch }}" --agree-tos -m "{{ email }}" --https-port "{{ server_name.alert.https }}"
+#     tags:
+#       - certbot_mon 
+#       - certbot
+#       - nginx_conf_mon
+
+  - name: Install certbot & chown & chmod
+    become: yes
+    become_user: root 
+    ansible.builtin.shell: |
+      /usr/bin/certbot install --nginx -n --cert-name "{{ server_name.graf.domain }}"
+      /usr/bin/certbot install --nginx -n --cert-name "{{ server_name.prom.domain }}"
+      /usr/bin/certbot install --nginx -n --cert-name "{{ server_name.alert.domain }}"      
+    tags:
+      - certbot_mon 
+      - certbot
+      - nginx_conf_mon
+
+  - name: Ensure group on monitoring.link-tel.ru exists
+    become: yes
+    become_user: root
+    ansible.builtin.group:
+      name: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      state: present
+    with_items: "{{ server_names }}"
+    tags:
+      - certbot_mon_fetch
+
+  - name: create users & on monitoring.link-tel.ru
+    become: yes
+    become_user: root
+    ansible.builtin.user:
+      name: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      group: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      state: present
+    with_items: "{{ server_names }}"
+    tags:
+      - certbot_mon_fetch
+
+  - name: Fetch all privkeys & fullchains from monlinktel grafana
+    become: yes
+    become_user: root
+    vars:
+      cert_type:
+        - privkey.pem
+        - fullchain.pem
+    ansible.builtin.fetch:
+      src: "/etc/letsencrypt/live/{{ server_name.graf.domain }}/{{ item }}"
+      dest: "files/certs/mon_certs/{{ server_name.graf.domain }}_{{ item }}"
+      flat: yes
+    with_items: "{{ cert_type }}"
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+
+  - name: Fetch all privkeys & fullchains from monlinktel prom
+    become: yes
+    become_user: root
+    vars:
+      cert_type:
+        - privkey.pem
+        - fullchain.pem
+    ansible.builtin.fetch:
+      src: "/etc/letsencrypt/live/{{ server_name.prom.domain }}/{{ item }}"
+      dest: "files/certs/mon_certs/{{ server_name.prom.domain }}_{{ item }}"
+      flat: yes
+    with_items: "{{ cert_type }}"
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+
+  - name: Fetch all privkeys & fullchains from monlinktel alert
+    become: yes
+    become_user: root
+    vars:
+      cert_type:
+        - privkey.pem
+        - fullchain.pem
+    ansible.builtin.fetch:
+      src: "/etc/letsencrypt/live/{{ server_name.alert.domain }}/{{ item }}"
+      dest: "files/certs/mon_certs/{{ server_name.alert.domain }}_{{ item }}"
+      flat: yes
+    with_items: "{{ cert_type }}"
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+
+  - name: copy certs from letsencrypt struct to /etc/certs
+    become: yes
+    become_user: root
+    ansible.posix.synchronize:
+      src: files/certs/mon_certs
+      dest: /etc/certs
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+
+  - name: Set diff. modes for grafana, prometheus, alertmanager certs & keys
+    become: yes
+    ansible.builtin.shell: |
+      cd /etc/certs/mon_certs && chmod -R 0600 *privkey.pem && chmod -R 0644 *fullchain.pem
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+  
+  - name: Set diff. owners for grafana, prometheus, alertmanager keys
+    become: yes
+    ansible.builtin.file:
+      path: /etc/certs/mon_certs/{{ item }}_privkey.pem
+      owner: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      group: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      state: file
+    with_items:
+      "{{ server_names }}"
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+  
+  - name: Set diff. owners for grafana, prometheus, alertmanager certs
+    become: yes
+    ansible.builtin.file:
+      path: /etc/certs/mon_certs/{{ item }}_fullchain.pem
+      owner: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      group: "{{ item|regex_replace('^(.*).link-tel.ru$', '\\1') }}"
+      state: file
+    with_items:
+      "{{ server_names }}"
+    tags:
+      - certbot_mon_fetch
+      - certbot
+      - nginx_up
+
+
+- name: Copy all stack certs & keys to nginx proxy link-tel
+  hosts: link_tel
+  tasks:
+
+  - name: Creation of directory on remote server
+    become: yes
+    become_user: root
+    ansible.builtin.file:
+      path: /etc/certs
+      state: directory
+      mode: 0755
+    register: result
+    tags: 
+      - nginx_up
+      - certbot
+      - certs_to_linktel      
+
+  - name: copy files to nginx proxy
+    become: yes
+    become_user: root
+    ansible.builtin.copy:
+      src: files/certs/ 
+      dest: "/etc/certs/"
+      owner: www-data
+      group: www-data
+      mode: 0644
+    tags: 
+      - nginx_up
+      - certbot
+      - certs_to_linktel      
+
+
+  - name: prepare nginx_conf listen 443 to linktel
+    become: yes
+    become_user: root
+    ansible.builtin.template:
+      src: templates/nginx_config.j2
+      dest: "{{ nginx_conf }}"
+      backup: yes
+    tags:
+      - nginx_up_conf 
+      - nginx_up 
+      - certbot
+
+  - name: Run certbot
+    become: yes
+    become_user: root 
+    ansible.builtin.shell: sudo certbot certonly -n --nginx -d "{{ server_name }}" --agree-tos -m demi@corp.linkintel.ru --cert-name "{{ server_name }}"
+    tags: 
+      - certbot
+      - nginx_conf_linktel
+
+  - name: Install certbot
+    become: yes
+    become_user: root 
+    ansible.builtin.shell: sudo certbot install --nginx -n --cert-name "{{ server_name }}"
+    tags: 
+      - certbot
+      - nginx_conf_linktel
+    
+  - name: Restart nginx
+    become: yes
+    become_user: root
+    ansible.builtin.service: name=nginx state=restarted enabled=yes
+    tags:
+      - nginx_up_conf
+      - nginx_up
+      - certbot
+
+
+
+
+- name: prom graf alertmanager up
+  hosts: monlinktel
+  roles: 
+    - promgrafal_role
+
+  tags:
+    - promgrafal
+    - grafana
+    - prometheus
+    - alertmanager

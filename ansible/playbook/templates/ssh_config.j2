@@ -1,0 +1,44 @@
+### First jump host. Directly reachable
+Host linktel
+  HostName {{ linktel }}
+  User {{ vm_user }}
+  IdentityFile {{ vm_key }}
+  Port {{ def_ssh_port }}
+
+
+### Host to jump to via {{ mydomain }}
+Host applinktel
+  HostName {{ applinktel }}
+  User {{ vm_user }}
+  IdentityFile {{ vm_key }}
+  Port {{ def_ssh_port }}
+
+  ProxyJump  {{ vm_user }}@{{ mydomain }}
+  ProxyCommand ssh -W %h:%p {{ mydomain }}
+
+Host runlinktel
+  HostName {{ runlinktel }}
+  User {{ vm_user }}
+  IdentityFile {{ vm_key }}
+  Port {{ def_ssh_port }}
+
+  ProxyJump  {{ vm_user }}@{{ mydomain }}
+  ProxyCommand ssh -W %h:%p {{ mydomain }}
+
+Host gitlablinktel
+  HostName {{ gitlablinktel }}
+  User {{ vm_user }}
+  IdentityFile {{ vm_key }}
+  Port {{ def_ssh_port }}
+
+  ProxyJump  {{ vm_user }}@{{ mydomain }}
+  ProxyCommand ssh -W %h:%p {{ mydomain }}
+
+Host monlinktel
+  HostName {{ monlinktel }}
+  User {{ vm_user }}
+  IdentityFile {{ vm_key }}
+  Port {{ def_ssh_port }}
+
+  ProxyJump  {{ vm_user }}@{{ mydomain }}
+  ProxyCommand ssh -W %h:%p {{ mydomain }}

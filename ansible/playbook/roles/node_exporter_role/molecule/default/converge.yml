@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include link_tel.node_exporter_role"
+      include_role:
+        name: "link_tel.node_exporter_role"

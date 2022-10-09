@@ -1,0 +1,28 @@
+
+##### Creating template for VMs ######
+
+##### Creating VMs ######
+
+- name:  www ubuntu validate nat instance for Yandex-Cloud
+  ansible.builtin.command: packer validate {{ packer_home|quote }}/{{ packer_hcl_www_file_name|quote }}
+  register: hcl_valid
+  tags:
+    - main_creating
+
+- name: check if nat instance exists - register iso_exists_output_json
+  ansible.builtin.shell: yc compute image list --format json
+  register: iso_exists_output_json
+  tags:
+    - main_creating
+
+- name: Print a variable iso_exists_output_json
+  ansible.builtin.debug:
+    var: iso_exists_output_json
+  tags:
+    - main_creating
+
+- name: Building www ubuntu nat instance vm from iso via packer, install nginx & certbot
+  ansible.builtin.command: packer build "{{ packer_home }}/{{ packer_hcl_www_file_name }}"
+  when: hcl_valid.stdout == "The configuration is valid." and iso_exists_output_json.stdout.find('ubuntu-18-04-nat-instance-linktelru') == -1
+  tags:
+    - main_creating

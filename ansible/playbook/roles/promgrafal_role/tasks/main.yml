@@ -1,0 +1,69 @@
+---
+
+# ##################### Prometheus ##################
+
+- import_tasks: preflight_prom.yml
+  tags:
+    - prometheus_configure
+    - prometheus_install
+    - prometheus_run
+
+- import_tasks: install_prom.yml
+  become: true
+  tags:
+    - prometheus_install
+
+- import_tasks: configure_prom.yml
+  become: true
+  tags:
+    - prometheus_configure
+
+- name: ensure prometheus service is started and enabled
+  become: true
+  systemd:
+    daemon_reload: true
+    name: prometheus
+    state: started
+    enabled: true
+  tags:
+    - prometheus_run
+
+# # ################## Grafana #######################
+
+- import_tasks: grafana.yml
+  become: True
+  tags:
+    - grafana_deploy
+
+
+# ################## Alertmanager ##################
+
+
+- import_tasks: install_alert.yml
+  become: true
+  tags:
+    - alertmanager_install
+
+- import_tasks: selinux_alert.yml
+  become: true
+  when: ansible_selinux.status == "enabled"
+  tags:
+    - alertmanager_configure
+
+- import_tasks: configure_alert.yml
+  become: true
+  tags:
+    - alertmanager_configure
+
+- name: ensure alertmanager service is started and enabled
+  become: true
+  systemd:
+    daemon_reload: true
+    name: alertmanager
+    state: started
+    enabled: true
+  tags:
+    - alertmanager_run
+
+- meta: flush_handlers
+  become: true

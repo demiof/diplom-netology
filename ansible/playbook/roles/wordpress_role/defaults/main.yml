@@ -1,0 +1,9 @@
+---
+# defaults file for wordpress_role
+
+nginx_version: "1.14.0"
+nginx_home: "/usr/sbin/{{ nginx_version }}"
+nginx_log_file: "/var/log/nginx/nginx.log"
+host_platform: "x86_64"
+nginx_user: www-data
+nginx_group: www-data

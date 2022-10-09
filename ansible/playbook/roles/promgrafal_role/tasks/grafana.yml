@@ -1,0 +1,76 @@
+---
+# tasks file for promgrafal_role
+
+# - name: j2 uploads grafana.ini
+#   become: yes
+#   ansible.builtin.temlate:
+#     src: templates/prometheus.yml.j2
+#     dest: /etc/prometheus/prometheus.yaml
+
+#- name: Prometheus
+
+- name: Grafana apt
+  become: yes
+  ansible.builtin.apt: 
+    name: "adduser, libfontconfig1, wget"
+    state: present
+  tags:
+    - grafana_deploy
+
+- name: copy grafana deb pack to remote 
+  ansible.builtin.copy:
+    src: files/grafana_{{ grafana_ver }}_{{ platform }}.deb
+    dest: /tmp/grafana_{{ grafana_ver }}_{{ platform }}.deb
+    tags:
+    - grafana_deploy
+
+- name: Install a grafana.deb package
+  become: yes
+  ansible.builtin.apt:
+    deb: /tmp/grafana_{{ grafana_ver }}_{{ platform }}.deb
+    update_cache: yes
+  tags:
+    - grafana_deploy
+
+- name: j2 uploads grafana.ini
+  become: yes
+  ansible.builtin.template:
+    src: templates/grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+    owner: grafana
+    group: grafana
+    mode: '0644'
+  tags:
+    - grafana_deploy
+
+- name: Just force systemd to reread configs (2.4 and above)
+  become: yes
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  tags:
+    - grafana_deploy
+
+- name: Make sure a service unit is restarted
+  become: yes
+  ansible.builtin.systemd:
+    state: restarted
+    name: grafana-server
+  tags:
+    - grafana_deploy
+
+- name: Enable service grafana-server and ensure it is not masked
+  become: yes
+  ansible.builtin.systemd:
+    name: grafana-server
+    enabled: yes
+    masked: no
+  tags:
+    - grafana_deploy
+
+- name: Make sure a service unit is running
+  become: yes
+  ansible.builtin.systemd:
+    state: started
+    name: grafana-server
+  tags:
+    - grafana_deploy

@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    managed: False
+    ansible_connection_options: 
+      ansible_connection: local
+platforms:
+  # - name: instance-centos8
+  #   image: quay.io/centos/centos:stream8
+  #   pre_build_image: true
+  # - name: instance-centos7
+  #   image: quay.io/centos/centos:centos7
+  #   pre_build_image: true  
+  - name: instance-ubuntu
+    image: quay.io/baselibrary/ubuntu:latest
+    pre_build_image: true
+  # - name: instance-fedora
+  #   image: quay.io/fedora/fedora:latest
+  #   pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

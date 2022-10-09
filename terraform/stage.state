@@ -1,0 +1,239 @@
+{
+  "version": 4,
+  "terraform_version": "1.2.3",
+  "serial": 11,
+  "lineage": "aec95e4e-249d-7aae-6399-a3deac7d3c69",
+  "outputs": {
+    "network-tf-dpl": {
+      "value": "enpbsku8oecgd8qfvc84",
+      "type": "string"
+    },
+    "yc_cloud_id": {
+      "value": "b1gtlo6uqrvrdckscbg8",
+      "type": "string"
+    },
+    "yc_folder_id": {
+      "value": "b1g0cjulnkupf6ghdlko",
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "yandex_iam_service_account",
+      "name": "sa",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-07T12:28:44Z",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "ajeei942vm1rejr9fkmo",
+            "name": "tf-diplom",
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMCwiZGVsZXRlIjo2MDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMH19"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_iam_service_account_static_access_key",
+      "name": "sa-static-key",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_key": "YCAJEcDIRIL00dEDewcZexClM",
+            "created_at": "2022-09-07T12:28:45Z",
+            "description": "static access key for object storage",
+            "encrypted_secret_key": null,
+            "id": "aje216t39ikesatfhlta",
+            "key_fingerprint": null,
+            "pgp_key": null,
+            "secret_key": "YCOGeAajmcDHvyLQTNPoBS1yAc4M8bbi0i9lwWZe",
+            "service_account_id": "ajeei942vm1rejr9fkmo"
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "yandex_iam_service_account.sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_resourcemanager_folder_iam_member",
+      "name": "sa-editor",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "b1g0cjulnkupf6ghdlko/storage.editor/serviceAccount:ajeei942vm1rejr9fkmo",
+            "member": "serviceAccount:ajeei942vm1rejr9fkmo",
+            "role": "storage.editor",
+            "sleep_after": null
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "yandex_iam_service_account.sa"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_storage_bucket",
+      "name": "terraform-dpl-bucket",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "access_key": "YCAJEcDIRIL00dEDewcZexClM",
+            "acl": "private",
+            "anonymous_access_flags": [
+              {
+                "list": false,
+                "read": false
+              }
+            ],
+            "bucket": "terraform-dpl-bucket",
+            "bucket_domain_name": "terraform-dpl-bucket.storage.yandexcloud.net",
+            "bucket_prefix": null,
+            "cors_rule": [],
+            "default_storage_class": "STANDARD",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "force_destroy": false,
+            "grant": [],
+            "https": [],
+            "id": "terraform-dpl-bucket",
+            "lifecycle_rule": [],
+            "logging": [],
+            "max_size": 0,
+            "policy": "",
+            "secret_key": "YCOGeAajmcDHvyLQTNPoBS1yAc4M8bbi0i9lwWZe",
+            "server_side_encryption_configuration": [],
+            "versioning": [
+              {
+                "enabled": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "secret_key"
+              }
+            ]
+          ],
+          "private": "bnVsbA==",
+          "dependencies": [
+            "yandex_iam_service_account.sa",
+            "yandex_iam_service_account_static_access_key.sa-static-key"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_vpc_network",
+      "name": "network-tf-dpl",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-07T12:28:44Z",
+            "default_security_group_id": "",
+            "description": "",
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "enpidojekbjrtnbp31fn",
+            "labels": {},
+            "name": "network-dpl",
+            "subnet_ids": [
+              "e2lc6aujf4d5usskvoro",
+              "e9bcq4si578jh4e7o7cf"
+            ],
+            "timeouts": null
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMCwiZGVsZXRlIjo2MDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMH19"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "yandex_vpc_subnet",
+      "name": "subnets-tf-dpl",
+      "provider": "provider[\"registry.terraform.io/yandex-cloud/yandex\"]",
+      "instances": [
+        {
+          "index_key": "ru-central1-a",
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-07T12:28:46Z",
+            "description": "",
+            "dhcp_options": [],
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "e9bcq4si578jh4e7o7cf",
+            "labels": {},
+            "name": "",
+            "network_id": "enpidojekbjrtnbp31fn",
+            "route_table_id": "",
+            "timeouts": null,
+            "v4_cidr_blocks": [
+              "192.168.111.0/24"
+            ],
+            "v6_cidr_blocks": [],
+            "zone": "ru-central1-a"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwLCJ1cGRhdGUiOjE4MDAwMDAwMDAwMH19",
+          "dependencies": [
+            "yandex_vpc_network.network-tf-dpl"
+          ]
+        },
+        {
+          "index_key": "ru-central1-b",
+          "schema_version": 0,
+          "attributes": {
+            "created_at": "2022-09-07T12:28:46Z",
+            "description": "",
+            "dhcp_options": [],
+            "folder_id": "b1g0cjulnkupf6ghdlko",
+            "id": "e2lc6aujf4d5usskvoro",
+            "labels": {},
+            "name": "",
+            "network_id": "enpidojekbjrtnbp31fn",
+            "route_table_id": "",
+            "timeouts": null,
+            "v4_cidr_blocks": [
+              "192.168.112.0/24"
+            ],
+            "v6_cidr_blocks": [],
+            "zone": "ru-central1-b"
+          },
+          "sensitive_attributes": [],
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxODAwMDAwMDAwMDAsImRlbGV0ZSI6MTgwMDAwMDAwMDAwLCJ1cGRhdGUiOjE4MDAwMDAwMDAwMH19",
+          "dependencies": [
+            "yandex_vpc_network.network-tf-dpl"
+          ]
+        }
+      ]
+    }
+  ]
+}
+
