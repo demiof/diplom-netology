@@ -55,7 +55,7 @@
 Все sensitive спрятаны, и критичные данные убраны в переменные окружения ОС.
 Созданные image в Packer использованы для deploy ресурсов. В коде, для удобства, сокращения и читаемости, использованы структуры типа карта карт списка строк:
 
-`
+```
 variable "my_subnets" {
   description = "my zones & my subnets"
   type        = map(map(list(string)))
@@ -72,11 +72,11 @@ variable "my_subnets" {
   }
 }
 
-`
+```
 
 Для возможности дополнительного контроля, добавлена серийная консоль на машину runner.link-tel.ru, возможно управлять с нее (для случаев потери ssh доступа), что видно в terraform plan:
 
-`
+```
 root@dev1-10:~/netol_do/diplom/terraform# terraform plan
 data.yandex_iam_service_account.sa: Reading...
 data.yandex_vpc_address.addr: Reading...
@@ -277,11 +277,11 @@ No changes. Your infrastructure matches the configuration.
 Terraform has compared your real infrastructure against your configuration and found no differences, so no changes are needed.
 root@dev1-10:~/netol_do/diplom/terraform# 
 
-`
+```
 
 Приведем State:
 
-`
+```
 root@dev1-10:~/netol_do/diplom/terraform# terraform state list
 data.yandex_iam_service_account.sa
 data.yandex_vpc_address.addr
@@ -301,11 +301,11 @@ yandex_vpc_security_group.my-sg
 yandex_vpc_security_group.mysql-sg
 root@dev1-10:~/netol_do/diplom/terraform# 
 
-`
+```
 
 Синхронизируем Workspase:
 
-`
+```
 
 root@dev1-10:~/netol_do/diplom/terraform# terraform workspace list
   default
@@ -318,7 +318,7 @@ root@dev1-10:~/netol_do/diplom/terraform# terraform workspace select prod
 root@dev1-10:~/netol_do/diplom/terraform# terraform state push -force dev.state
 ...
 
-`
+```
 
 Все workspace одинаковы.
 
@@ -363,7 +363,7 @@ root@dev1-10:~/netol_do/diplom/terraform# terraform state push -force dev.state
 ![Деплой и его валидация](assets/gitlab-deploy-validation.jpg)
 
 
-Сам pipline в визуализации:
+Сам pipeline в визуализации:
 
 ![Так выглядит простейший pipeline](assets/gitlab-pipeline-view.jpg)
 
@@ -373,17 +373,17 @@ root@dev1-10:~/netol_do/diplom/terraform# terraform state push -force dev.state
 2. Link-test и Unit-test
 3. Deploy job
 
-Как раз на стадии 3 выполняется простеший bash-скрипт, который и выполняет сам процесс: используя rsync, синхронизирует рубочий репозитарий и prod, в момент появления commit.
+Как раз на стадии 3 выполняется простеший bash-скрипт, который и выполняет сам процесс: используя rsync, синхронизирует рабочий репозитарий и prod, в момент появления commit.
 
 Сам код прост, но не внем дело:
 
-`
+```
 root@app:~/www# cat /root/mirror_dirs.sh 
 #!/bin/bash
 
 rsync  -rhzi --size-only --exclude 'tmp' /var/www/ /root/www/
  
-`
+```
 
 Его цель, после коммита в основном репозитарии развернуть деплой в prod.
 
@@ -397,15 +397,15 @@ rsync  -rhzi --size-only --exclude 'tmp' /var/www/ /root/www/
 
 Особенно стоит отметить ошибку с 'Origin not allowed' в Grafana и ее поиском и лечением в конфиге:
 
-`
+```
         proxy_set_header Host $http_host;
-`
+```
 Не получилось добиться от тех. поддержки YC, почему  не возвращают метрики от Managed MySQL, хотя с правами и запросом было вроде все хорошо:
 
-`
+```
 curl -X GET -H "Authorization: Bearer $<Api key>" "https://monitoring.api.cloud.yandex.net/monitoring/v2/prometheusMetrics?folderId=b1g0cjulnkupf6ghdlko&service=c9qndkrctkp2kdffec92"
 
-`
+```
 Поросили свои заголовки, но это видимо уже в следующий раз ...
 
 ## В заключении ...
