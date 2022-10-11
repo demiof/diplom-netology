@@ -21,7 +21,7 @@
 | 0.              | link-tel.ru Перспективный "Бастион" с Reverse-proxy на Nginx, входная точка tcp-соединений, pub_ipv4                |
 | 1.              | [grafana.link-tel.ru](https://grafana.link-tel.ru) Grafana                                                          |
 | 2.              | [prometheus.link-tel.ru](https://prometheus.link-tel.ru) Prometheus                                                 |
-| 3.              | [alertmanager.link-tel.ru](https://alertmanager.link-tel.ru) Alertmanager - в т.ч. ## 0-2, мониторинг и оповещение. |
+| 3.              | [alertmanager.link-tel.ru](https://alertmanager.link-tel.ru) Alertmanager - в т.ч. ## 1-2, мониторинг и оповещение. |
 | 4.              | [gitlab.link-tel.ru](https://gitlab.link-tel.ru) Gitlab - Фреймворк CI/СD.                                          |
 | 5.              | [www.link-tel.ru](https://www.link-tel.ru/wp-login.php) Wordpress - имитация данных разработчиков в prod и dev.     |
 
