@@ -16,6 +16,7 @@
 
 Автоматизированная установка на выходе разворачивает следующие сервисы:
 
+0. link-tel.ru Перспективный "Бастион" с Reverse-proxy на Nginx, входная точка tcp-соединений, pub_ipv4
 1. [grafana.link-tel.ru](https://grafana.link-tel.ru) Grafana
 2. [prometheus.link-tel.ru](https://prometheus.link-tel.ru) Prometheus
 3. [alertmanager.link-tel.ru](https://alertmanager.link-tel.ru) Alertmanager - в том числе предшествующие 2, мониторинг и оповещение.
@@ -25,6 +26,7 @@
 Сервисы 1,2,3 развернуты на monitoring.link-tel.ru
 4 - gitlab.link-tel.ru и runner.link-tel.ru
 5 - app.link-tel.ru
+
 
 Отдельная ВМ с образом NAT выполняет функции Reverse proxy на Nginx, с использованием проксирования https соединений.
 
@@ -333,7 +335,7 @@ root@dev1-10:~/netol_do/diplom/terraform# terraform state push -force dev.state
 
 [https://github.com/prometheus/alertmanager/pull/2827](https://github.com/prometheus/alertmanager/pull/2827)
 
-Так же это видно, что это самый свежий commit, и оны - 24/03/22:
+Так же это видно, что это самый свежий commit, и он - 24/03/22:
 
 [https://github.com/prometheus/alertmanager/releases/tag/v0.24.0](https://github.com/prometheus/alertmanager/releases/tag/v0.24.0)
 
