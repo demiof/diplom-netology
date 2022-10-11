@@ -16,16 +16,25 @@
 
 Автоматизированная установка на выходе разворачивает следующие сервисы:
 
-0. link-tel.ru Перспективный "Бастион" с Reverse-proxy на Nginx, входная точка tcp-соединений, pub_ipv4
-1. [grafana.link-tel.ru](https://grafana.link-tel.ru) Grafana
-2. [prometheus.link-tel.ru](https://prometheus.link-tel.ru) Prometheus
-3. [alertmanager.link-tel.ru](https://alertmanager.link-tel.ru) Alertmanager - в том числе предшествующие 2, мониторинг и оповещение.
-4. [gitlab.link-tel.ru](https://gitlab.link-tel.ru) Gitlab - Фреймворк CI/СD.
-5. [www.link-tel.ru](https://www.link-tel.ru/wp-login.php) Wordpress - имитация кода и данных в prod и dev разработчиков.
+| Номер сущщности | Описание / описание                                                                                                 |
+|:----------------|:--------------------------------------------------------------------------------------------------------------------|
+| 0.              | link-tel.ru Перспективный "Бастион" с Reverse-proxy на Nginx, входная точка tcp-соединений, pub_ipv4                |
+| 1.              | [grafana.link-tel.ru](https://grafana.link-tel.ru) Grafana                                                          |
+| 2.              | [prometheus.link-tel.ru](https://prometheus.link-tel.ru) Prometheus                                                 |
+| 3.              | [alertmanager.link-tel.ru](https://alertmanager.link-tel.ru) Alertmanager - в т.ч. ## 0-2, мониторинг и оповещение. |
+| 4.              | [gitlab.link-tel.ru](https://gitlab.link-tel.ru) Gitlab - Фреймворк CI/СD.                                          |
+| 5.              | [www.link-tel.ru](https://www.link-tel.ru/wp-login.php) Wordpress - имитация данных разработчиков в prod и dev.     |
 
-Сервисы 1,2,3 развернуты на monitoring.link-tel.ru
-4 - gitlab.link-tel.ru и runner.link-tel.ru
-5 - app.link-tel.ru
+
+Для возможности доступа на ноды инфраструктуры в таблице ниже (за link-tel.ru) был использован SshJump - соответственно настроен ssh.
+
+| Alias для sshjump  | Домен                  | Описание / отн. к виртуальной машине, доп. домены на машине                             |
+|:-------------------|:-----------------------|:----------------------------------------------------------------------------------------|
+| linktel            | link-te.ru             | перспективный Бастион, Reverse proxy, входная точка tcp-соединений,                     |
+| monlinktel         | monitoring.link-tel.ru | cервисы 1,2,3 (из предыдущей таблицы) развернуты на monitoring.link-tel.                |
+| gitlablinktel      | gitlab.link-tel.ru     | cреда разрабоки                                                                         |
+| runlinktel         | runner.link-tel.ru     | проект, выполняющий заданную через GitLab CI работу и отправляет резльтаты обратно      |
+| applinktel         | www.link-tel.ru        | Wordpress - имитация данных разработчиков в prod и dev.                                 |
 
 
 Отдельная ВМ с образом NAT выполняет функции Reverse proxy на Nginx, с использованием проксирования https соединений.
