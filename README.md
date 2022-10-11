@@ -377,7 +377,7 @@ root@dev1-10:~/netol_do/diplom/terraform# terraform state push -force dev.state
 
 Как раз на стадии 3 выполняется простеший bash-скрипт, который и выполняет сам процесс: используя rsync, синхронизирует рабочий репозитарий и prod, в момент появления commit.
 
-Сам код прост, но не внем дело:
+Сам код прост, но не в нем дело:
 
 ```
 root@app:~/www# cat /root/mirror_dirs.sh 
