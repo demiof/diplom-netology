@@ -22,8 +22,7 @@
     validate: "{{ _prometheus_binary_install_dir }}/promtool check rules %s"
   with_fileglob: "{{ prometheus_custom_alert_rules_files }}"
   notify:
-    - reload prometheus
-
+  
 - name: configure prometheus
   template:
     src: "{{ prometheus_config_file }}"
@@ -35,7 +34,8 @@
     validate: "{{ _prometheus_binary_install_dir }}/promtool check config %s"
   notify:
     - reload prometheus
-
+  tags:
+    - prom_conf
 
 - name: configure prometheus
   template:

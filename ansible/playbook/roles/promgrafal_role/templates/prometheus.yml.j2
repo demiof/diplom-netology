@@ -113,8 +113,8 @@ scrape_configs:
     params:
       folderId:
       - {{ yc_folderId }}
-      serviceId:
-      - {{ yc_serviceId }}
+      service:
+      - managed-mysql
     bearer_token: {{ yc_api_key }}
 
     # Или через файл (рекомендуется):
@@ -123,9 +123,8 @@ scrape_configs:
     static_configs:
     - targets: ['monitoring.api.cloud.yandex.net']
       labels:
-        folder: {{ yc_folderId }}
-        service: managed-mysql
-#       service: {{ yc_serviceId }}
+        folderId: {{ yc_folderId }}
+        service: {{ yc_serviceId }}
 
 alerting:
   alertmanagers:

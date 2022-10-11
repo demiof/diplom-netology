@@ -221,7 +221,7 @@
       - certbot_check
 
 - name: Certbot installation on stack except mon
-  hosts: other_nginx:!gitlablinktel:!runlinktel
+  hosts: other_nginx:!runlinktel
   tasks:
 
   - name: Run certbot
