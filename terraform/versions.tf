@@ -15,8 +15,8 @@ terraform {
     region                      = "ru-central1"
     skip_region_validation      = true
     skip_credentials_validation = true
-    access_key                  = "YCAJE4zCQpQ96dxmt1ghiPTfv"
-    secret_key                  = "YCOZHFMAjk3dnr47SxZPW-ENtRNoYnw7Zs6QZcOe"
+    #access_key                  = ""
+    #secret_key                  = ""
 
   }
 
